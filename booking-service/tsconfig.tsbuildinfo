@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/config/supabaseclient.ts","./src/controllers/bookingcontroller.ts","./src/models/bookingmodel.ts","./src/routes/bookingroutes.ts","./src/services/bookingservice.ts","./src/utils/helper.ts","./src/utils/logger.ts"],"version":"5.6.3"}
