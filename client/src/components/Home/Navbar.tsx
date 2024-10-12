@@ -10,6 +10,13 @@ const Navbar = () => {
         setIsOpen(!isOpen);
     };
 
+    const scrollToSection = (id: string) => {
+        const section = document.getElementById(id);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <nav className="bg-gradient-to-r from-green-100 to-gray-100 shadow-md w-full fixed top-0 z-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,23 +29,23 @@ const Navbar = () => {
                         </Link>
                     </div>
                     <div className="hidden md:flex space-x-8 items-center">
-                        <Link href="/">
-                            <span className="text-gray-700 text-lg hover:text-[#A9592C]">
+                        <Link href="/" onClick={() => scrollToSection('home')}>
+                            <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Home
                             </span>
                         </Link>
-                        <Link href="/about">
-                            <span className="text-gray-700 text-lg hover:text-[#A9592C]">
+                        <Link href="#about-us" onClick={() => scrollToSection('about-us')}>
+                            <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 About us
                             </span>
                         </Link>
-                        <Link href="/services">
-                            <span className="text-gray-700 text-lg hover:text-[#A9592C]">
+                        <Link href="#services" onClick={() => scrollToSection('services')}>
+                            <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link href="/contact">
-                            <span className="text-gray-700 text-lg hover:text-[#A9592C]">
+                        <Link href="#contact" onClick={() => scrollToSection('contact')}>
+                            <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Contact us
                             </span>
                         </Link>
@@ -74,23 +81,23 @@ const Navbar = () => {
             {isOpen && (
                 <div className="md:hidden">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link href="/">
-                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2">
+                        <Link href="/" onClick={() => scrollToSection('home')}>
+                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Home
                             </span>
                         </Link>
-                        <Link href="/about">
-                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2">
+                        <Link href="#about-us" onClick={() => scrollToSection('about-us')}>
+                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 About us
                             </span>
                         </Link>
-                        <Link href="/services">
-                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2">
+                        <Link href="#services" onClick={() => scrollToSection('services')}>
+                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link href="/contact">
-                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2">
+                        <Link href="#contact" onClick={() => scrollToSection('contact')}>
+                            <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Contact us
                             </span>
                         </Link>

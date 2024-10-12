@@ -3,7 +3,7 @@ import Heading from '../Utils/Heading';
 
 const OurServices = () => {
     return (
-        <div className="bg-gradient-to-r from-[#d2eae5] to-[#ead9ce]  h-full flex lg:pt-0  items-center">
+        <div id='services' className="bg-gradient-to-r from-[#d2eae5] to-[#ead9ce]  h-full flex lg:pt-0  items-center">
             <div className="max-w-7xl mx-auto flex flex-col justify-between items-center px-4 py-12 sm:px-6 lg:px-8">
                 <Heading text="Our Services" />
                 <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">

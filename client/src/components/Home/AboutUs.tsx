@@ -3,7 +3,7 @@ import Heading from '../Utils/Heading';
 
 const AboutUs = () => {
     return (
-        <section className="bg-gray-50 text-black py-16 px-6">
+        <section id='about-us' className="bg-gray-50 text-black py-16 px-6">
             <div className="container mx-auto text-center lg:text-left max-w-4xl">
                 <Heading text="About Us" />
 
