@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
 import 'leaflet/dist/leaflet.css';
 import Navbar from '@/components/Home/Navbar';
 import Footer from '@/components/Home/Footer';
+import { UserProvider } from '@/context/UserContext';
 
 export const metadata: Metadata = {
     title: 'Fleet Nexa',
@@ -18,9 +18,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={` antialiased`}>
-                <Navbar />
-                {children}
-                <Footer />
+                <UserProvider>
+                    <Navbar />
+                    {children}
+                    <Footer />
+                </UserProvider>
             </body>
         </html>
     );

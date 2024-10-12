@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useUserContext } from '@/context/UserContext'; // Adjust the import path as needed
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useUserContext(); // Get user state from context
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -49,17 +51,51 @@ const Navbar = () => {
                                 Contact us
                             </span>
                         </Link>
-                        <Link href="/book">
-                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
-                                Book now
-                            </button>
-                        </Link>
+                        {user ? ( // Check if user is logged in
+                            user.isAdmin ? ( // Check if user is admin
+                                <>
+                                    <Link href="/drivers">
+                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                            Drivers
+                                        </button>
+                                    </Link>
+                                    <Link href="/bookings">
+                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                            Bookings
+                                        </button>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/book">
+                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                            Book now
+                                        </button>
+                                    </Link>
+                                    <Link href="/track/dfd">
+                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                            Track Orders
+                                        </button>
+                                    </Link>
+                                </>
+                            )
+                        ) : (
+                            <>
+                                <Link href="/login">
+                                    <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                        Login
+                                    </button>
+                                </Link>
+                                <Link href="/signup">
+                                    <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                        SignUp
+                                    </button>
+                                </Link>
+                            </>
+                        )}
                     </div>
                     <div className="flex md:hidden items-center">
-                        <button
-                            onClick={toggleMenu}
-                            className="text-gray-700 focus:outline-none"
-                        >
+                        <button onClick={toggleMenu} className="text-gray-700 focus:outline-none">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -101,11 +137,34 @@ const Navbar = () => {
                                 Contact us
                             </span>
                         </Link>
-                        <Link href="/book">
-                            <span className="block bg-brown-600 bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-brown-700">
-                                Book now
-                            </span>
-                        </Link>
+                        {user ? ( // Check if user is logged in
+                            user.isAdmin ? ( // Check if user is admin
+                                <>
+                                    <Link href="/drivers">
+                                        <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                            Drivers
+                                        </span>
+                                    </Link>
+                                    <Link href="/bookings">
+                                        <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                            Bookings
+                                        </span>
+                                    </Link>
+                                </>
+                            ) : (
+                                <Link href="/book">
+                                    <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                        Book now
+                                    </span>
+                                </Link>
+                            )
+                        ) : (
+                            <Link href="/login">
+                                <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                    Login
+                                </span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             )}

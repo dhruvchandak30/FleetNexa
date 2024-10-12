@@ -4,13 +4,12 @@ import { useState } from 'react';
 const BookingPage = () => {
     const [pickupLocation, setPickupLocation] = useState('');
     const [dropoffLocation, setDropoffLocation] = useState('');
-    const [vehicleType, setVehicleType] = useState('');
+
     const [estimatedCost, setEstimatedCost] = useState<number | null>(null);
 
     const handleBooking = (e: React.FormEvent) => {
         e.preventDefault();
-        const cost =
-            vehicleType === 'Sedan' ? 30 : vehicleType === 'SUV' ? 50 : 0;
+        const cost = 0;
         setEstimatedCost(cost);
     };
 
@@ -48,21 +47,7 @@ const BookingPage = () => {
                             required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-black mb-2">
-                            Vehicle Type
-                        </label>
-                        <select
-                            value={vehicleType}
-                            onChange={(e) => setVehicleType(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                            required
-                        >
-                            <option value="">Select a vehicle</option>
-                            <option value="Sedan">Sedan</option>
-                            <option value="SUV">SUV</option>
-                        </select>
-                    </div>
+
                     <button
                         type="submit"
                         className="w-full bg-[#A9592C] text-white py-2 rounded-md hover:bg-opacity-90"
