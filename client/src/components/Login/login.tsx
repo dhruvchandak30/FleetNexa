@@ -5,8 +5,8 @@ import { useUserContext } from '@/context/UserContext';
 import bcrypt from 'bcryptjs';
 const LoginSignupPage = () => {
     const { setUser } = useUserContext();
-    const [userType, setUserType] = useState<'User' | 'Driver' | 'Admin'>(
-        'User'
+    const [userType, setUserType] = useState<'user' | 'driver' | 'admin'>(
+        'user'
     );
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -18,19 +18,19 @@ const LoginSignupPage = () => {
         setError('');
 
         try {
-            const hashedPassword = await bcrypt.hash(password, 10);
+    
 
             const response = await fetch(
-                'http://localhost:5001/api/auth/login',
+                'http://localhost:5000/api/login',
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        type: userType,
+                        role: userType,
                         email,
-                        password: hashedPassword,
+                        password,
                     }),
                 }
             );
@@ -39,7 +39,7 @@ const LoginSignupPage = () => {
 
             if (response.ok) {
                 setUser({ type: userType, email });
-                router.push('/home');
+                router.push('/');
             } else {
                 setError(
                     data.message ||
@@ -69,23 +69,23 @@ const LoginSignupPage = () => {
                         value={userType}
                         onChange={(e) =>
                             setUserType(
-                                e.target.value as 'User' | 'Driver' | 'Admin'
+                                e.target.value as 'user' | 'driver' | 'admin'
                             )
                         }
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     >
-                        <option value="User">User</option>
-                        <option value="Driver">Driver</option>
-                        <option value="Admin">Admin</option>
+                        <option value="user">User</option>
+                        <option value="driver">Driver</option>
+                        <option value="admin">Admin</option>
                     </select>
                 </div>
 
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
                         <label className="block text-black mb-2">
-                            {userType === 'User'
+                            {userType === 'user'
                                 ? 'Email'
-                                : userType === 'Driver'
+                                : userType === 'driver'
                                 ? 'Driver ID'
                                 : 'Admin Code'}
                         </label>

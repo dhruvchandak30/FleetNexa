@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const driverController_1 = require("../controllers/driverController");
+const vehicleController_1 = require("../controllers/vehicleController");
 const router = (0, express_1.Router)();
-router.post('/', driverController_1.createDriver);
-router.get('/', driverController_1.getAllDrivers);
+router.post('/', vehicleController_1.createVehicle);
+router.get('/', vehicleController_1.getAllVehicles);
 exports.default = router;

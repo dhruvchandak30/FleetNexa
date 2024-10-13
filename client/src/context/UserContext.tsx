@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState } from 'react';
 
 interface User {
-  type: 'User' | 'Driver' | 'Admin';
+  type: 'user' | 'driver' | 'admin';
   email: string;
 }
 

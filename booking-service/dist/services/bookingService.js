@@ -12,10 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingById = exports.createBooking = void 0;
 const supabaseClient_1 = require("../config/supabaseClient");
 const createBooking = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user_id, driver_id, vehicle_id, pickup_location, dropoff_location, estimated_cost } = bookingData;
-    const { data, error } = yield supabaseClient_1.supabase
-        .from('bookings')
-        .insert([
+    const { user_id, driver_id, vehicle_id, pickup_location, dropoff_location, estimated_cost, } = bookingData;
+    const { data, error } = yield supabaseClient_1.supabase.from('bookings').insert([
         {
             user_id,
             driver_id,

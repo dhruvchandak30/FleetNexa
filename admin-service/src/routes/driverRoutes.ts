@@ -3,7 +3,7 @@ import { createDriver, getAllDrivers } from '../controllers/driverController';
 
 const router = Router();
 
-router.post('/drivers', createDriver);
-router.get('/drivers', getAllDrivers);
+router.post('/', createDriver);
+router.get('/', getAllDrivers);
 
 export default router;

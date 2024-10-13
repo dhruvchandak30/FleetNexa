@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useUserContext } from '@/context/UserContext'; // Adjust the import path as needed
+import { useUserContext } from '@/context/UserContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { user } = useUserContext(); // Get user state from context
+    const { user, setUser } = useUserContext();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -17,6 +17,10 @@ const Navbar = () => {
         if (section) {
             section.scrollIntoView({ behavior: 'smooth' });
         }
+    };
+
+    const handleLogout = () => {
+        setUser(null);
     };
 
     return (
@@ -36,49 +40,71 @@ const Navbar = () => {
                                 Home
                             </span>
                         </Link>
-                        <Link href="#about-us" onClick={() => scrollToSection('about-us')}>
+                        <Link
+                            href="#about-us"
+                            onClick={() => scrollToSection('about-us')}
+                        >
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 About us
                             </span>
                         </Link>
-                        <Link href="#services" onClick={() => scrollToSection('services')}>
+                        <Link
+                            href="#services"
+                            onClick={() => scrollToSection('services')}
+                        >
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link href="#contact" onClick={() => scrollToSection('contact')}>
+                        <Link
+                            href="#contact"
+                            onClick={() => scrollToSection('contact')}
+                        >
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Contact us
                             </span>
                         </Link>
-                        {user ? ( // Check if user is logged in
-                            user.isAdmin ? ( // Check if user is admin
-                                <>
-                                    <Link href="/drivers">
-                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
-                                            Drivers
-                                        </button>
-                                    </Link>
-                                    <Link href="/bookings">
-                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
-                                            Bookings
-                                        </button>
-                                    </Link>
-                                </>
-                            ) : (
-                                <>
-                                    <Link href="/book">
-                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
-                                            Book now
-                                        </button>
-                                    </Link>
-                                    <Link href="/track/dfd">
-                                        <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
-                                            Track Orders
-                                        </button>
-                                    </Link>
-                                </>
-                            )
+                        {user ? (
+                            <>
+                                {user.type === 'admin' ? (
+                                    <>
+                                        <Link href="admin/drivers">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Drivers
+                                            </button>
+                                        </Link>
+                                        <Link href="admin/bookings">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Bookings
+                                            </button>
+                                        </Link>
+                                        <Link href="admin/vehicle">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Vehicles
+                                            </button>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link href="/book">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Book now
+                                            </button>
+                                        </Link>
+                                        <Link href="/track/dfd">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Track Orders
+                                            </button>
+                                        </Link>
+                                    </>
+                                )}
+                                <button
+                                    onClick={handleLogout}
+                                    className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200"
+                                >
+                                    Logout
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link href="/login">
@@ -95,7 +121,10 @@ const Navbar = () => {
                         )}
                     </div>
                     <div className="flex md:hidden items-center">
-                        <button onClick={toggleMenu} className="text-gray-700 focus:outline-none">
+                        <button
+                            onClick={toggleMenu}
+                            className="text-gray-700 focus:outline-none"
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -122,42 +151,64 @@ const Navbar = () => {
                                 Home
                             </span>
                         </Link>
-                        <Link href="#about-us" onClick={() => scrollToSection('about-us')}>
+                        <Link
+                            href="#about-us"
+                            onClick={() => scrollToSection('about-us')}
+                        >
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 About us
                             </span>
                         </Link>
-                        <Link href="#services" onClick={() => scrollToSection('services')}>
+                        <Link
+                            href="#services"
+                            onClick={() => scrollToSection('services')}
+                        >
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link href="#contact" onClick={() => scrollToSection('contact')}>
+                        <Link
+                            href="#contact"
+                            onClick={() => scrollToSection('contact')}
+                        >
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Contact us
                             </span>
                         </Link>
-                        {user ? ( // Check if user is logged in
-                            user.isAdmin ? ( // Check if user is admin
-                                <>
-                                    <Link href="/drivers">
+                        {user ? (
+                            <>
+                                {user.type === 'admin' ? (
+                                    <>
+                                        <Link href="/admin/driver">
+                                            <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                                Drivers
+                                            </span>
+                                        </Link>
+                                        <Link href="admin/booking">
+                                            <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                                Bookings
+                                            </span>
+                                        </Link>
+                                        <Link href="admin/vehicle">
+                                            <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
+                                                Vehicles
+                                            </span>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <Link href="/book">
                                         <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
-                                            Drivers
+                                            Book now
                                         </span>
                                     </Link>
-                                    <Link href="/bookings">
-                                        <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
-                                            Bookings
-                                        </span>
-                                    </Link>
-                                </>
-                            ) : (
-                                <Link href="/book">
-                                    <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
-                                        Book now
-                                    </span>
-                                </Link>
-                            )
+                                )}
+                                <button
+                                    onClick={handleLogout}
+                                    className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90"
+                                >
+                                    Logout
+                                </button>
+                            </>
                         ) : (
                             <Link href="/login">
                                 <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">

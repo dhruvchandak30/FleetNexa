@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 const SignupPage = () => {
     const { setUser } = useUserContext();
-    const [userType, setUserType] = useState<'User' | 'Admin'>('User');
+    const [userType, setUserType] = useState<'user' | 'admin'>('user');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,32 +22,29 @@ const SignupPage = () => {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             const requestBody: any = {
-                type: userType,
                 name,
                 email,
-                password: hashedPassword,
+                password_hash: hashedPassword,
+                role: userType,
             };
 
-            if (userType === 'User') {
-                requestBody.phone = phone;
+            if (userType === 'user') {
+                requestBody.phone_number = phone;
             }
 
-            const response = await fetch(
-                'http://localhost:5001/api/auth/signup',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestBody),
-                }
-            );
+            const response = await fetch('http://localhost:5000/api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
 
             const data = await response.json();
 
             if (response.ok) {
                 setUser({ type: userType, email });
-                router.push('/home');
+                router.push('/');
             } else {
                 setError(data.message || 'Signup failed, please try again.');
             }
@@ -73,12 +70,12 @@ const SignupPage = () => {
                     <select
                         value={userType}
                         onChange={(e) =>
-                            setUserType(e.target.value as 'User' | 'Admin')
+                            setUserType(e.target.value as 'user' | 'admin')
                         }
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     >
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
                     </select>
                 </div>
 
@@ -118,7 +115,7 @@ const SignupPage = () => {
                         />
                     </div>
 
-                    {userType === 'User' && (
+                    {userType === 'user' && (
                         <div className="mb-4">
                             <label className="block text-black mb-2">
                                 Phone
