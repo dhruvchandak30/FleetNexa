@@ -1,10 +1,10 @@
 {
-    "name": "admin-service",
+    "name": "api-gateway",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
         "build": "tsc -b",
-        "start": "node dist/index.js",
+        "start": "nodemon dist/index.js",
         "dev": "npm run build && npm run start"
     },
     "keywords": [],
@@ -12,16 +12,14 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
-        "@supabase/supabase-js": "^2.45.4",
-        "@types/express": "^5.0.0",
         "dotenv": "^16.4.5",
         "express": "^4.21.1",
         "kafkajs": "^2.2.4",
-        "nodemon": "^3.1.7"
+        "nodemon": "^3.1.7",
+        "typescript": "^5.6.3"
     },
     "devDependencies": {
-        "@types/node": "^22.7.5",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.6.3"
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.7.5"
     }
 }

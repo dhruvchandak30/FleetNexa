@@ -2,6 +2,7 @@ import express from 'express';
 import bookingRoutes from './routes/bookingRoutes';
 import driverRoutes from './routes/driverRoutes';
 import dotenv from 'dotenv';
+import { main } from './queues/consumer';
 
 dotenv.config();
 
@@ -13,5 +14,6 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/drivers', driverRoutes);
 
 app.listen(PORT, () => {
+    main();
     console.log(`Server is running on http://localhost:${PORT}`);
 });
