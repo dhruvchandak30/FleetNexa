@@ -1,23 +1,20 @@
-# Dockerfile for Booking Service
+# Use official Node.js image
+FROM node:18
 
-# Step 1: Specify the base image
-FROM node:14
+# Set the working directory
+WORKDIR /app
 
-# Step 2: Set the working directory
-WORKDIR /usr/src/app
-
-# Step 3: Copy package.json and install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Step 4: Copy the source code
+# Copy the rest of the application code
 COPY . .
 
-# Step 5: Build TypeScript files
-RUN npm run build
+# Expose the port (adjust according to service)
+EXPOSE 5000 
 
-# Step 6: Expose the port the app runs on
-EXPOSE 3001
-
-# Step 7: Define the command to run the app
-CMD ["node", "dist/index.js"]
+# Run the app in development mode
+CMD ["npm", "run", "dev"]

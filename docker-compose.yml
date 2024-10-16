@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+    command: npm run dev
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+
+  admin-service:
+    build:
+      context: ./admin-service
+    command: npm run dev
+    volumes:
+      - ./admin-service:/app
+      - /app/node_modules
+    ports:
+      - '5001:5001'
+    environment:
+      - NODE_ENV=development
+
+  booking-service:
+    build:
+      context: ./booking-service
+    command: npm run dev
+    volumes:
+      - ./booking-service:/app
+      - /app/node_modules
+    ports:
+      - '5000:5000'
+    environment:
+      - NODE_ENV=development

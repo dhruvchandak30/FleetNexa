@@ -13,8 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port (adjust according to service)
-EXPOSE 5001
+# Expose the port for the client
+EXPOSE 3000
 
 # Run the app in development mode
 CMD ["npm", "run", "dev"]
