@@ -3,7 +3,7 @@ import * as bookingService from '../services/bookingService';
 
 export const createBooking = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const bookingData = await bookingService.createBooking(req.body);
+        const bookingData = await bookingService.createBookingWithDriverAndVehicle(req.body);
         return res.status(201).json({ message: 'Booking created', data: bookingData });
     } catch (error) {
         if (error instanceof Error) {

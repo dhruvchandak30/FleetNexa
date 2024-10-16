@@ -9,29 +9,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingById = exports.createBooking = void 0;
+exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingById = exports.createBookingWithDriverAndVehicle = void 0;
 const supabaseClient_1 = require("../config/supabaseClient");
-const createBooking = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user_id, driver_id, vehicle_id, pickup_location, dropoff_location, estimated_cost, } = bookingData;
-    const { data, error } = yield supabaseClient_1.supabase.from('bookings').insert([
+const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(bookingData);
+    const { user_id, pickup_location, dropoff_location, vehicle_type, booking_time, capacity, } = bookingData;
+    const { data: driverData, error: driverError } = yield supabaseClient_1.supabase
+        .from('drivers')
+        .select('*')
+        .eq('status', 'available')
+        .limit(1);
+    if (driverError || !driverData.length) {
+        console.log(driverError);
+        throw new Error('No available driver found.');
+    }
+    console.log('Driver Data', driverData);
+    const driver = driverData[0];
+    const { data: vehicleData, error: vehicleError } = yield supabaseClient_1.supabase
+        .from('vehicles')
+        .select('*')
+        .eq('capacity', capacity)
+        .eq('type', vehicle_type)
+        .limit(1);
+    if (vehicleError || !vehicleData.length) {
+        console.log(vehicleError);
+        throw new Error('No matching vehicle found.');
+    }
+    console.log('vehicle Data', vehicleData);
+    const vehicle = vehicleData[0];
+    const { data: bookingDataResult, error: bookingError } = yield supabaseClient_1.supabase
+        .from('bookings')
+        .insert([
         {
             user_id,
-            driver_id,
-            vehicle_id,
             pickup_location,
             dropoff_location,
-            estimated_cost,
+            booking_time,
             status: 'pending',
+            driver_id: driver.id,
+            vehicle_id: vehicle.id,
             created_at: new Date(),
             updated_at: new Date(),
+            estimated_cost: 0,
         },
     ]);
-    if (error) {
-        throw new Error(`Error creating booking: ${error.message}`);
+    if (bookingError) {
+        console.log('Booking Error', bookingError);
+        throw new Error(`Error creating booking: ${bookingError.message}`);
     }
-    return data;
+    console.log(bookingDataResult, driver, vehicle);
+    return bookingDataResult;
 });
-exports.createBooking = createBooking;
+exports.createBookingWithDriverAndVehicle = createBookingWithDriverAndVehicle;
 const getBookingById = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
     const { data, error } = yield supabaseClient_1.supabase
         .from('bookings')

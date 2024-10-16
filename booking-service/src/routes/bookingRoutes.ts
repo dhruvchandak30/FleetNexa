@@ -3,6 +3,6 @@ import { createBooking } from '../controllers/bookingController';
 
 const router = Router();
 //@ts-ignore
-router.post('/book', createBooking); 
+router.post('/', createBooking); 
 
 export default router;

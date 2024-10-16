@@ -19,19 +19,19 @@ const login = async (req: Request, res: Response) => {
         if (role === 'admin') {
             ({ data, error } = await supabase
                 .from('admins')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         } else if (role === 'driver') {
             ({ data, error } = await supabase
                 .from('drivers')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         } else if (role === 'user') {
             ({ data, error } = await supabase
                 .from('users')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         }
@@ -51,6 +51,7 @@ const login = async (req: Request, res: Response) => {
         return res.status(200).json({
             message: `${role} logged in successfully!`,
             email: data.email,
+            id: data.id,
         });
     } catch (err) {
         return res.status(500).json({ message: 'Server error', error: err });

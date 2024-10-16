@@ -5,7 +5,10 @@ export interface Booking {
     vehicle_id: string;
     pickup_location: string;
     dropoff_location: string;
-    estimated_cost: number;
+    estimated_cost?: number;
+    vehicle_type: string;
+    booking_time: Date;
+    capacity: number;
     status: 'pending' | 'accepted' | 'completed' | 'canceled';
     created_at?: Date;
     updated_at?: Date;

@@ -36,7 +36,7 @@ exports.createBooking = void 0;
 const bookingService = __importStar(require("../services/bookingService"));
 const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const bookingData = yield bookingService.createBooking(req.body);
+        const bookingData = yield bookingService.createBookingWithDriverAndVehicle(req.body);
         return res.status(201).json({ message: 'Booking created', data: bookingData });
     }
     catch (error) {

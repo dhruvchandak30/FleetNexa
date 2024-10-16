@@ -36,9 +36,10 @@ const LoginSignupPage = () => {
             );
 
             const data = await response.json();
+            console.log(data);
 
             if (response.ok) {
-                setUser({ type: userType, email });
+                setUser({ type: userType, email, id: data.id });
                 router.push('/');
             } else {
                 setError(

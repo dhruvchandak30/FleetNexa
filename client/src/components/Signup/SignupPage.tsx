@@ -43,7 +43,7 @@ const SignupPage = () => {
             const data = await response.json();
 
             if (response.ok) {
-                setUser({ type: userType, email });
+                setUser({ type: userType, email, id: data.id });
                 router.push('/');
             } else {
                 setError(data.message || 'Signup failed, please try again.');

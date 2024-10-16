@@ -1,35 +1,70 @@
 import { supabase } from '../config/supabaseClient';
 import { Booking } from '../models/bookingModel';
 
-export const createBooking = async (bookingData: Booking) => {
+export const createBookingWithDriverAndVehicle = async (
+    bookingData: Booking
+) => {
+    console.log(bookingData);
     const {
         user_id,
-        driver_id,
-        vehicle_id,
         pickup_location,
         dropoff_location,
-        estimated_cost,
+        vehicle_type,
+        booking_time,
+        capacity,
     } = bookingData;
 
-    const { data, error } = await supabase.from('bookings').insert([
-        {
-            user_id,
-            driver_id,
-            vehicle_id,
-            pickup_location,
-            dropoff_location,
-            estimated_cost,
-            status: 'pending',
-            created_at: new Date(),
-            updated_at: new Date(),
-        },
-    ]);
+    const { data: driverData, error: driverError } = await supabase
+        .from('drivers')
+        .select('*')
+        .eq('status', 'available')
+        .limit(1);
 
-    if (error) {
-        throw new Error(`Error creating booking: ${error.message}`);
+    if (driverError || !driverData.length) {
+        console.log(driverError);
+        throw new Error('No available driver found.');
     }
+    console.log('Driver Data', driverData);
+    const driver = driverData[0];
 
-    return data;
+    const { data: vehicleData, error: vehicleError } = await supabase
+        .from('vehicles')
+        .select('*')
+        .eq('capacity', capacity)
+        .eq('type', vehicle_type)
+        .limit(1);
+
+    if (vehicleError || !vehicleData.length) {
+        console.log(vehicleError);
+        throw new Error('No matching vehicle found.');
+    }
+    console.log('vehicle Data', vehicleData);
+
+    const vehicle = vehicleData[0];
+
+    const { data: bookingDataResult, error: bookingError } = await supabase
+        .from('bookings')
+        .insert([
+            {
+                user_id,
+                pickup_location,
+                dropoff_location,
+                booking_time,
+                status: 'pending',
+                driver_id: driver.id,
+                vehicle_id: vehicle.id,
+                created_at: new Date(),
+                updated_at: new Date(),
+                estimated_cost: 0,
+            },
+        ]);
+
+    if (bookingError) {
+        console.log('Booking Error', bookingError);
+        throw new Error(`Error creating booking: ${bookingError.message}`);
+    }
+    console.log(bookingDataResult, driver, vehicle);
+    return bookingDataResult;
 };
 
 export const getBookingById = async (bookingId: number) => {

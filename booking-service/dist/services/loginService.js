@@ -28,21 +28,21 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (role === 'admin') {
             ({ data, error } = yield supabaseClient_1.supabase
                 .from('admins')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         }
         else if (role === 'driver') {
             ({ data, error } = yield supabaseClient_1.supabase
                 .from('drivers')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         }
         else if (role === 'user') {
             ({ data, error } = yield supabaseClient_1.supabase
                 .from('users')
-                .select('email, password_hash')
+                .select('email, password_hash, id')
                 .eq('email', email)
                 .single());
         }
@@ -60,6 +60,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(200).json({
             message: `${role} logged in successfully!`,
             email: data.email,
+            id: data.id,
         });
     }
     catch (err) {
