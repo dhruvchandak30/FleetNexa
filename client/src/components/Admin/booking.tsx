@@ -1,32 +1,31 @@
 'use client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import Heading from '../Utils/Heading';
 
 interface Booking {
     id?: number;
-    userId: number;
-    driverId?: number;
-    vehicleId?: number;
-    pickupLocation: string;
-    dropoffLocation: string;
-    bookingTime?: Date;
+    user_id: number;
+    driver_id?: number;
+    vehicle_id?: number;
+    pickup_location: string;
+    dropoff_location: string;
+    booking_time?: Date;
     status: string;
     estimatedCost: number;
 }
 
 const Bookings = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
-    const [pickupLocation, setPickupLocation] = useState('');
-    const [dropoffLocation, setDropoffLocation] = useState('');
-    const [estimatedCost, setEstimatedCost] = useState<number>(0);
-    const [status, setStatus] = useState('');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const fetchBookings = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/bookings');
+            const response = await axios.get(
+                'http://localhost:5001/api/bookings'
+            );
             setBookings(response.data);
             setError('');
         } catch (err) {
@@ -34,120 +33,125 @@ const Bookings = () => {
         }
     };
 
-    const addBooking = async () => {
-        // Validation checks
-        if (!pickupLocation || !dropoffLocation || estimatedCost <= 0) {
-            setError('Please fill in all fields with valid values.');
-            return;
-        }
-
-        setLoading(true);
+    const handleStatusUpdate = async (id: number, status: string) => {
         try {
-            const bookingData: Booking = {
-                userId: 1,
-                pickupLocation,
-                dropoffLocation,
-                estimatedCost,
-                status: status || 'pending',
-            };
-            await axios.post('http://localhost:5001/api/bookings/book', bookingData);
-            fetchBookings();
-            resetForm();
-            setError('');
-        } catch (err) {
-            setError('Failed to add booking. Please try again later.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const deleteBooking = async (id: number) => {
-        try {
-            await axios.delete(`http://localhost:5001/api/bookings/${id}`);
+            await axios.patch(`http://localhost:5001/api/bookings/status`, {
+                id,
+                status,
+            });
             fetchBookings();
             setError('');
         } catch (err) {
-            setError('Failed to delete booking. Please try again later.');
+            setError(
+                'Failed to update booking status. Please try again later.'
+            );
         }
-    };
-
-    const resetForm = () => {
-        setPickupLocation('');
-        setDropoffLocation('');
-        setEstimatedCost(0);
-        setStatus('');
-        setError(''); // Clear any existing error when resetting the form
     };
 
     useEffect(() => {
         fetchBookings();
     }, []);
 
+    const handleBookingClick = (id: number) => {
+        router.push(`/admin/booking/${id}`);
+    };
+
     return (
-        <div className="bg-gray-50 p-8 rounded-lg pt-24 shadow-md">
-            <div className="max-w-7xl mx-auto">
+        <div className="bg-gray-100 min-h-screen py-8">
+            <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
                 <Heading text="Manage Your Bookings" />
-                <p className="text-black mb-6">
-                    Use the form below to create new bookings and manage your existing ones.
-                </p>
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 p-2 rounded mb-4">
-                        {error}
-                    </div>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                        type="text"
-                        placeholder="Pickup Location"
-                        value={pickupLocation}
-                        onChange={(e) => setPickupLocation(e.target.value)}
-                        className="border border-gray-300 p-3 rounded shadow-sm focus:outline-none focus:ring focus:ring-[#A9592C] focus:border-transparent"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Dropoff Location"
-                        value={dropoffLocation}
-                        onChange={(e) => setDropoffLocation(e.target.value)}
-                        className="border border-gray-300 p-3 rounded shadow-sm focus:outline-none focus:ring focus:ring-[#A9592C] focus:border-transparent"
-                    />
-                    <input
-                        type="number"
-                        placeholder="Estimated Cost"
-                        value={estimatedCost}
-                        onChange={(e) => setEstimatedCost(Number(e.target.value))}
-                        className="border border-gray-300 p-3 rounded shadow-sm focus:outline-none focus:ring focus:ring-[#A9592C] focus:border-transparent"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Status"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value)}
-                        className="border border-gray-300 p-3 rounded shadow-sm focus:outline-none focus:ring focus:ring-[#A9592C] focus:border-transparent"
-                    />
-                </div>
-                <button
-                    onClick={addBooking}
-                    className="bg-[#A9592C] text-white p-3 rounded mt-4 hover:bg-opacity-90 shadow-md"
-                    disabled={loading}
-                >
-                    {loading ? 'Adding...' : 'Add Booking'}
-                </button>
-                <h2 className="text-black text-xl mt-6 mb-4">Existing Bookings</h2>
-                <ul className="border border-gray-300 rounded-lg shadow-sm">
-                    {bookings.map((booking) => (
-                        <li
-                            key={booking.id}
-                            className="flex justify-between items-center p-4 border-b last:border-b-0"
-                        >
-                            <span className="text-black">{`${booking.pickupLocation} to ${booking.dropoffLocation}`}</span>
-                            <button
-                                onClick={() => deleteBooking(booking.id!)}
-                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 shadow-md"
+
+                <h2 className="text-xl text-gray-800 mt-6 mb-4 font-semibold">
+                    Existing Bookings
+                </h2>
+
+                {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
+                <ul className="space-y-4">
+                    {bookings.length === 0 ? (
+                        <p className="text-gray-500">No bookings found.</p>
+                    ) : (
+                        bookings.map((booking) => (
+                            <li
+                                key={booking.id}
+                                className="bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer p-4 rounded-lg flex justify-between items-center shadow-sm border border-gray-200"
                             >
-                                Delete
-                            </button>
-                        </li>
-                    ))}
+                                <div
+                                    onClick={() =>
+                                        handleBookingClick(booking.id!)
+                                    }
+                                >
+                                    <p className="text-gray-700 font-medium">
+                                        {booking.pickup_location} to{' '}
+                                        {booking.dropoff_location}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        Status:{' '}
+                                        <span className="capitalize">
+                                            {booking.status}
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div className="flex space-x-2">
+                                    {booking.status === 'accepted' ? (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleStatusUpdate(
+                                                    booking.id!,
+                                                    'rejected'
+                                                );
+                                            }}
+                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
+                                        >
+                                            Reject
+                                        </button>
+                                    ) : booking.status === 'rejected' ? (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleStatusUpdate(
+                                                    booking.id!,
+                                                    'accepted'
+                                                );
+                                            }}
+                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors"
+                                        >
+                                            Accept
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusUpdate(
+                                                        booking.id!,
+                                                        'accepted'
+                                                    );
+                                                }}
+                                                className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors"
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusUpdate(
+                                                        booking.id!,
+                                                        'rejected'
+                                                    );
+                                                }}
+                                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
+                                            >
+                                                Reject
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </li>
+                        ))
+                    )}
                 </ul>
             </div>
         </div>
