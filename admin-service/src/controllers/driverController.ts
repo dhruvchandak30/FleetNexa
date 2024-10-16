@@ -20,6 +20,7 @@ export const createDriver = async (
     next: NextFunction
 ): Promise<void> => {
     try {
+        console.log(req.body);
         const driverData = await driverService.createDriver(req.body);
         res.status(201).json({ message: 'Driver created', data: driverData });
     } catch (error) {

@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Heading from '../Utils/Heading';
 
 const AddVehicle: React.FC = () => {
     const [type, setType] = useState('');
-    const [licensePlate, setLicensePlate] = useState(''); 
+    const [licensePlate, setLicensePlate] = useState('');
     const [capacity, setCapacity] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [vehicles, setVehicles] = useState([]);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ const AddVehicle: React.FC = () => {
         try {
             const response = await axios.post('http://localhost:5001/api/vehicles', {
                 type,
-                license_plate: licensePlate, 
+                license_plate: licensePlate,
                 capacity,
             });
 
@@ -30,11 +31,25 @@ const AddVehicle: React.FC = () => {
                 setType('');
                 setLicensePlate('');
                 setCapacity('');
+                fetchVehicles(); 
             }
         } catch (error) {
             setError('Failed to add vehicle. Please try again.');
         }
     };
+
+    const fetchVehicles = async () => {
+        try {
+            const response = await axios.get('http://localhost:5001/api/vehicles');
+            setVehicles(response.data);  
+        } catch (error) {
+            setError('Failed to load vehicles.');
+        }
+    };
+
+    useEffect(() => {
+        fetchVehicles(); 
+    }, []);
 
     return (
         <div className="max-w-md mx-auto my-10 p-6 pt-12 bg-white rounded-lg shadow-md">
@@ -96,6 +111,24 @@ const AddVehicle: React.FC = () => {
                     Add Vehicle
                 </button>
             </form>
+
+            <div className="mt-10">
+                <Heading text="Existing Vehicles" />
+                {vehicles.length > 0 ? (
+                    <ul className="mt-4">
+                        {vehicles.map((vehicle: any) => (
+                            <li key={vehicle.id} className="mb-4 p-4 bg-gray-100 rounded shadow">
+                                 <p><strong>Id:</strong> {vehicle.id}</p>
+                                <p><strong>Type:</strong> {vehicle.type}</p>
+                                <p><strong>License Plate:</strong> {vehicle.license_plate}</p>
+                                <p><strong>Capacity:</strong> {vehicle.capacity}</p>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No vehicles found.</p>
+                )}
+            </div>
         </div>
     );
 };

@@ -18,12 +18,11 @@ const createVehicle = (vehicleData) => __awaiter(void 0, void 0, void 0, functio
             type: vehicleData.type,
             license_plate: vehicleData.license_plate,
             capacity: vehicleData.capacity,
-            driver_id: vehicleData.driver_id,
-            created_at: new Date(),
-            updated_at: new Date(),
         }]);
-    if (error)
+    if (error) {
+        console.log(error);
         throw new Error(error.message);
+    }
     return data;
 });
 exports.createVehicle = createVehicle;

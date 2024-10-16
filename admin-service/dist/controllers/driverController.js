@@ -46,6 +46,7 @@ const getAllDrivers = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 exports.getAllDrivers = getAllDrivers;
 const createDriver = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req.body);
         const driverData = yield driverService.createDriver(req.body);
         res.status(201).json({ message: 'Driver created', data: driverData });
     }

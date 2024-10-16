@@ -17,15 +17,14 @@ const createDriver = (driverData) => __awaiter(void 0, void 0, void 0, function*
         .insert([{
             name: driverData.name,
             email: driverData.email,
-            password_hash: driverData.passwordHash,
-            phone_number: driverData.phoneNumber,
-            vehicle_id: driverData.vehicleId,
+            password_hash: driverData.password_hash,
+            phone_number: driverData.phone_number,
             status: driverData.status,
-            created_at: new Date(),
-            updated_at: new Date(),
         }]);
-    if (error)
+    if (error) {
+        console.log(error);
         throw new Error(error.message);
+    }
     return data;
 });
 exports.createDriver = createDriver;

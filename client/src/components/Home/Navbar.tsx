@@ -68,17 +68,17 @@ const Navbar = () => {
                             <>
                                 {user.type === 'admin' ? (
                                     <>
-                                        <Link href="admin/drivers">
+                                        <Link href="/admin/driver">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
                                                 Drivers
                                             </button>
                                         </Link>
-                                        <Link href="admin/bookings">
+                                        <Link href="/admin/booking">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
                                                 Bookings
                                             </button>
                                         </Link>
-                                        <Link href="admin/vehicle">
+                                        <Link href="/admin/vehicle">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
                                                 Vehicles
                                             </button>
