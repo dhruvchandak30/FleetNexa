@@ -9,12 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllBookings = exports.createBooking = void 0;
+exports.updateBookingStatus = exports.getBookingById = exports.getAllBookings = exports.createBooking = void 0;
 const config_1 = require("../config");
 const createBooking = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
-    const { data, error } = yield config_1.supabase
-        .from('bookings')
-        .insert([{
+    const { data, error } = yield config_1.supabase.from('bookings').insert([
+        {
             user_id: bookingData.userId,
             driver_id: bookingData.driverId,
             vehicle_id: bookingData.vehicleId,
@@ -23,18 +22,42 @@ const createBooking = (bookingData) => __awaiter(void 0, void 0, void 0, functio
             booking_time: bookingData.bookingTime || new Date(),
             status: bookingData.status,
             estimated_cost: bookingData.estimatedCost,
-        }]);
+        },
+    ]);
     if (error)
         throw new Error(error.message);
     return data;
 });
 exports.createBooking = createBooking;
 const getAllBookings = () => __awaiter(void 0, void 0, void 0, function* () {
-    const { data, error } = yield config_1.supabase
-        .from('bookings')
-        .select('*');
+    const { data, error } = yield config_1.supabase.from('bookings').select('*');
     if (error)
         throw new Error(error.message);
     return data;
 });
 exports.getAllBookings = getAllBookings;
+const getBookingById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data, error } = yield config_1.supabase
+        .from('bookings')
+        .select(`
+            *,
+            driver:drivers(*),
+            vehicle:vehicles(*)
+        `)
+        .eq('id', id)
+        .single();
+    if (error)
+        throw new Error(error.message);
+    return data;
+});
+exports.getBookingById = getBookingById;
+const updateBookingStatus = (id, status) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data, error } = yield config_1.supabase
+        .from('bookings')
+        .update({ status })
+        .eq('id', id);
+    if (error)
+        throw new Error(error.message);
+    return data;
+});
+exports.updateBookingStatus = updateBookingStatus;

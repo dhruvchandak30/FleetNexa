@@ -28,9 +28,10 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
     const { data: vehicleData, error: vehicleError } = yield supabaseClient_1.supabase
         .from('vehicles')
         .select('*')
-        .eq('capacity', capacity)
+        .gte('capacity', capacity.toString())
         .eq('type', vehicle_type)
-        .limit(1);
+        .eq('status', 'available')
+        .order('capacity', { ascending: true });
     if (vehicleError || !vehicleData.length) {
         console.log(vehicleError);
         throw new Error('No matching vehicle found.');
@@ -58,7 +59,11 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
         throw new Error(`Error creating booking: ${bookingError.message}`);
     }
     console.log(bookingDataResult, driver, vehicle);
-    return bookingDataResult;
+    const data = [];
+    // data.push(bookingDataResult);
+    data.push(driver);
+    data.push(vehicle);
+    return data;
 });
 exports.createBookingWithDriverAndVehicle = createBookingWithDriverAndVehicle;
 const getBookingById = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {

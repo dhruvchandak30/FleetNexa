@@ -2,7 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const bookingController_1 = require("../controllers/bookingController");
+const bookingController_2 = require("../controllers/bookingController");
 const router = (0, express_1.Router)();
 router.post('/', bookingController_1.createBooking);
 router.get('/', bookingController_1.getAllBookings);
+router.get('/:id', bookingController_2.getBookingById);
+router.patch('/status', bookingController_1.updateBookingStatus);
 exports.default = router;

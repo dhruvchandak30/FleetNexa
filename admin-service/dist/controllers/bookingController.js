@@ -32,14 +32,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllBookings = exports.createBooking = void 0;
+exports.updateBookingStatus = exports.getBookingById = exports.getAllBookings = exports.createBooking = void 0;
 const bookingService = __importStar(require("../services/bookingService"));
 const createBooking = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookingData = yield bookingService.createBooking(req.body);
-        res
-            .status(201)
-            .json({ message: 'Booking created', data: bookingData });
+        res.status(201).json({ message: 'Booking created', data: bookingData });
     }
     catch (error) {
         res.status(400).json({ error: 'Error creating booking' });
@@ -56,3 +54,46 @@ const getAllBookings = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getAllBookings = getAllBookings;
+const getBookingById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookingId = req.params.id;
+        console.log('Booking Id', bookingId);
+        const booking = yield bookingService.getBookingById(bookingId);
+        if (booking) {
+            res.status(200).json(booking);
+        }
+        else {
+            res.status(404).json({ error: 'Booking not found' });
+        }
+    }
+    catch (error) {
+        res.status(400).json({ error: 'Error fetching booking' });
+    }
+});
+exports.getBookingById = getBookingById;
+const updateBookingStatus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id, status } = req.body;
+        console.log("Got Booking Status", id, status);
+        if (!id || !status) {
+            res.status(400).json({
+                error: 'Missing required parameters: id or status',
+            });
+            return;
+        }
+        const updatedBooking = yield bookingService.updateBookingStatus(id, status);
+        if (updatedBooking) {
+            res.status(200).json({
+                message: 'Booking status updated successfully',
+                data: updatedBooking,
+            });
+        }
+        else {
+            res.status(404).json({ error: 'Booking not found' });
+        }
+    }
+    catch (error) {
+        res.status(400).json({ error: 'Error updating booking status' });
+    }
+});
+exports.updateBookingStatus = updateBookingStatus;

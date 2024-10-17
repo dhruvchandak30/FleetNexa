@@ -30,9 +30,10 @@ export const createBookingWithDriverAndVehicle = async (
     const { data: vehicleData, error: vehicleError } = await supabase
         .from('vehicles')
         .select('*')
-        .eq('capacity', capacity)
+        .gte('capacity', capacity.toString())
         .eq('type', vehicle_type)
-        .limit(1);
+        .eq('status', 'available')
+        .order('capacity', { ascending: true });
 
     if (vehicleError || !vehicleData.length) {
         console.log(vehicleError);
@@ -64,7 +65,11 @@ export const createBookingWithDriverAndVehicle = async (
         throw new Error(`Error creating booking: ${bookingError.message}`);
     }
     console.log(bookingDataResult, driver, vehicle);
-    return bookingDataResult;
+    const data=[];
+    // data.push(bookingDataResult);
+    data.push(driver);
+    data.push(vehicle);
+    return data;
 };
 
 export const getBookingById = async (bookingId: number) => {
