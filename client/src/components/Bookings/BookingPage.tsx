@@ -1,6 +1,7 @@
 'use client';
 import { useUserContext } from '@/context/UserContext';
 import { useState } from 'react';
+const opencage = require('opencage-api-client');
 
 const BookingPage = () => {
     const [pickupLocation, setPickupLocation] = useState('');
@@ -8,6 +9,8 @@ const BookingPage = () => {
     const [capacity, setCapacity] = useState<number | null>(null);
     const [vehicleType, setVehicleType] = useState('');
     const [bookingTime, setBookingTime] = useState('');
+    const [estimatedCost, setEstimatedCost] = useState<number>(0);
+    const [loading, setLoading] = useState(false);
 
     interface Driver {
         name: string;
@@ -26,47 +29,103 @@ const BookingPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const { user } = useUserContext();
 
+    const fetchCoordinates = async (location: string) => {
+        try {
+            const data = await opencage.geocode({
+                q: location,
+                key: process.env.NEXT_PUBLIC_OPENCAGE_API_KEY,
+            });
+            if (data.status.code === 200 && data.results.length > 0) {
+                const place = data.results[0];
+                return {
+                    lat: place.geometry.lat,
+                    lng: place.geometry.lng,
+                    formatted: place.formatted,
+                    timezone: place.annotations.timezone.name,
+                };
+            } else {
+                throw new Error(`No results found: ${data.status.message}`);
+            }
+        } catch (error: any) {
+            console.error('Error fetching coordinates:', error.message);
+            if (error.status?.code === 402) {
+                console.error('Hit free trial daily limit');
+            }
+            throw new Error('Error with geocoding API', error);
+        }
+    };
+
     const handleBooking = async (e: React.FormEvent) => {
         e.preventDefault();
         setSuccessMessage('');
         setErrorMessage('');
-        const bookingData = {
-            user_id: user?.id,
-            pickup_location: pickupLocation,
-            dropoff_location: dropoffLocation,
-            capacity,
-            vehicle_type: vehicleType,
-            booking_time: bookingTime,
-        };
+        setLoading(true); // Start loading
 
         try {
-            const response = await fetch('http://localhost:5000/api/bookings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(bookingData),
-            });
+            const pickupCoords = await fetchCoordinates(pickupLocation);
+            const dropoffCoords = await fetchCoordinates(dropoffLocation);
+            console.log(pickupCoords);
+            console.log(dropoffCoords);
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log(result.data);
-                setDriver(result.data[0]);
-                setVehicle(result.data[1]);
-                setShowDetails(true);
-                setSuccessMessage('Booking created successfully!');
+            if (pickupCoords && dropoffCoords) {
+                const bookingData = {
+                    user_id: user?.id,
+                    pickup_location: pickupCoords,
+                    dropoff_location: dropoffCoords,
+                    capacity,
+                    vehicle_type: vehicleType,
+                    booking_time: bookingTime,
+                };
+                console.log(bookingData);
+
+                const response = await fetch(
+                    'http://localhost:5000/api/bookings',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(bookingData),
+                    }
+                );
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setDriver(result.data[0]);
+                    setVehicle(result.data[1]);
+                    setEstimatedCost(result.data[2]);
+                    setShowDetails(true);
+                    setSuccessMessage('Booking created successfully!');
+                } else {
+                    const errorResult = await response.json();
+                    setErrorMessage(
+                        errorResult.error || 'Error with booking request'
+                    );
+                }
             } else {
-                const errorResult = await response.json();
                 setErrorMessage(
-                    errorResult.error || 'Error with booking request'
+                    'Could not fetch coordinates for one or both locations'
                 );
             }
         } catch (error) {
-            setErrorMessage(
-                //@ts-ignore
-                'Failed to send booking request: ' + error?.message
-            );
+            //@ts-ignore
+            setErrorMessage('Failed to send booking request: ' + error.message);
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const formatBookingTime = (bookingTime: string) => {
+        const date = new Date(bookingTime);
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        };
+        return date.toLocaleString('en-US', options);
     };
 
     return (
@@ -79,7 +138,11 @@ const BookingPage = () => {
                     Book Your Ride
                 </h1>
 
-                {!showDetails ? (
+                {loading ? ( // Conditional rendering for loading
+                    <div className="flex justify-center items-center h-32">
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#A9592C]"></div>
+                    </div>
+                ) : !showDetails ? (
                     <form onSubmit={handleBooking}>
                         <div className="mb-4">
                             <label className="block text-black mb-2">
@@ -172,56 +235,49 @@ const BookingPage = () => {
                         </button>
                     </form>
                 ) : (
-                    <div>
-                        <h2 className="text-xl font-semibold text-black mb-4">
+                    <div className="bg-white shadow-lg rounded-lg p-6">
+                        <h2 className="text-2xl font-semibold text-black mb-6 border-b-2 border-gray-300 pb-2">
                             Booking Details
                         </h2>
-                        <div className="mb-4">
-                            <p className="text-black">
-                                Driver Name: {driver?.name}
+                        <div className="mb-6">
+                            <p className="text-lg text-gray-800">
+                                <span className="font-bold">Driver Name:</span>{' '}
+                                {driver?.name}
                             </p>
-                            <p className="text-black">
-                                Driver Phone: {driver?.phone_number}
-                            </p>
-                        </div>
-                        <div className="mb-4">
-                            <p className="text-black">
-                                Vehicle Type: {vehicle?.type}
-                            </p>
-                            <p className="text-black">
-                                Vehicle Capacity: {vehicle?.capacity}
-                            </p>
-                            <p className="text-black">
-                                License Plate: {vehicle?.license_plate}
+                            <p className="text-lg text-gray-800">
+                                <span className="font-bold">Driver Phone:</span>{' '}
+                                {driver?.phone_number}
                             </p>
                         </div>
-                        <div className="mb-4">
-                            <p className="text-black">
-                                Pickup Location: {pickupLocation}
+                        <div className="mb-6">
+                            <p className="text-lg text-gray-800">
+                                <span className="font-bold">Vehicle Type:</span>{' '}
+                                {vehicle?.type}
                             </p>
-                            <p className="text-black">
-                                Dropoff Location: {dropoffLocation}
+                            <p className="text-lg text-gray-800">
+                                <span className="font-bold">
+                                    Vehicle Capacity:
+                                </span>{' '}
+                                {vehicle?.capacity}
                             </p>
-                            <p className="text-black">
-                                Booking Time: {bookingTime}
+                            <p className="text-lg text-gray-800">
+                                <span className="font-bold">
+                                    License Plate:
+                                </span>{' '}
+                                {vehicle?.license_plate}
                             </p>
                         </div>
+                        <p className="text-lg text-gray-800">
+                            <span className="font-bold">Estimated Cost:</span> $
+                            {estimatedCost.toFixed(2)}
+                        </p>
                     </div>
                 )}
-
                 {successMessage && (
-                    <div className="mt-6 text-green-600">
-                        <h2 className="text-xl font-semibold">
-                            {successMessage}
-                        </h2>
-                    </div>
+                    <p className="text-green-500 mt-4">{successMessage}</p>
                 )}
                 {errorMessage && (
-                    <div className="mt-6 text-red-600">
-                        <h2 className="text-xl font-semibold">
-                            {errorMessage}
-                        </h2>
-                    </div>
+                    <p className="text-red-500 mt-4">{errorMessage}</p>
                 )}
             </div>
         </div>

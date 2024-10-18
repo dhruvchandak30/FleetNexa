@@ -3,8 +3,8 @@ export interface Booking {
     user_id: string;
     driver_id?: string;
     vehicle_id: string;
-    pickup_location: string;
-    dropoff_location: string;
+    pickup_location: JSON;
+    dropoff_location: JSON;
     estimated_cost?: number;
     vehicle_type: string;
     booking_time: Date;

@@ -36,8 +36,24 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
         console.log(vehicleError);
         throw new Error('No matching vehicle found.');
     }
-    console.log('vehicle Data', vehicleData);
+    console.log('Vehicle Data', vehicleData);
     const vehicle = vehicleData[0];
+    const pricingServiceUrl = 'http://localhost:5002/calculate-cost';
+    const pricingResponse = yield fetch(pricingServiceUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            pickup_location,
+            dropoff_location,
+        }),
+    });
+    if (!pricingResponse.ok) {
+        const errorData = yield pricingResponse.json();
+        throw new Error(`Error fetching estimated cost: ${errorData.message}`);
+    }
+    const { estimated_cost } = yield pricingResponse.json();
     const { data: bookingDataResult, error: bookingError } = yield supabaseClient_1.supabase
         .from('bookings')
         .insert([
@@ -51,7 +67,7 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
             vehicle_id: vehicle.id,
             created_at: new Date(),
             updated_at: new Date(),
-            estimated_cost: 0,
+            estimated_cost,
         },
     ]);
     if (bookingError) {
@@ -60,9 +76,9 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
     }
     console.log(bookingDataResult, driver, vehicle);
     const data = [];
-    // data.push(bookingDataResult);
     data.push(driver);
     data.push(vehicle);
+    data.push(estimated_cost);
     return data;
 });
 exports.createBookingWithDriverAndVehicle = createBookingWithDriverAndVehicle;
