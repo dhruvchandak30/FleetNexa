@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingsByUserId = exports.getBookingById = exports.createBookingWithDriverAndVehicle = void 0;
+exports.acceptBooking = exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingsByUserId = exports.getBookingById = exports.createBookingWithDriverAndVehicle = void 0;
 const supabaseClient_1 = require("../config/supabaseClient");
 const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(bookingData);
@@ -163,13 +163,25 @@ const getUserBookings = (userId) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.getUserBookings = getUserBookings;
 const getDriverBookings = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Driver Id', driverId);
     const { data, error } = yield supabaseClient_1.supabase
         .from('bookings')
         .select('*')
         .eq('driver_id', driverId);
     if (error) {
+        console.log(error);
         throw new Error(`Error fetching driver bookings: ${error.message}`);
     }
     return data;
 });
 exports.getDriverBookings = getDriverBookings;
+const acceptBooking = (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
+    const { error } = yield supabaseClient_1.supabase
+        .from('bookings')
+        .update({ status: 'On the way' })
+        .eq('id', bookingId);
+    if (error) {
+        throw new Error(`Error accepting booking: ${error.message}`);
+    }
+});
+exports.acceptBooking = acceptBooking;

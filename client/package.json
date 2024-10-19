@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "leaflet": "^1.9.4",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
     "leaflet-routing-machine": "^3.2.12",
     "next": "14.2.15",
     "opencage-api-client": "^1.0.7",

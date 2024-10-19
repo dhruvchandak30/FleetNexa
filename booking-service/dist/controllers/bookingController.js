@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBookingById = exports.getBookings = exports.createBooking = void 0;
+exports.updateBookingStatus = exports.acceptBooking = exports.getDriverBookings = exports.getBookingById = exports.getBookings = exports.createBooking = void 0;
 const bookingService = __importStar(require("../services/bookingService"));
 const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -73,3 +73,42 @@ const getBookingById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getBookingById = getBookingById;
+const getDriverBookings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookings = yield bookingService.getDriverBookings(req.body.driver_id);
+        return res.status(200).json({ bookings });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.getDriverBookings = getDriverBookings;
+const acceptBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield bookingService.acceptBooking(req.body.booking_id);
+        return res.status(200).json({ message: 'Booking accepted' });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.acceptBooking = acceptBooking;
+const updateBookingStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield bookingService.updateBookingStatus(req.body.booking_id, req.body.status);
+        return res.status(200).json({ message: 'Booking status updated' });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.updateBookingStatus = updateBookingStatus;

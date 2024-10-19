@@ -7,7 +7,7 @@ export default function Page() {
     const id = params.id;
 
     if (!id) {
-        return <p>Loading...</p>;
+        return <p className="pt-12 my-12">Loading...</p>;
     }
 
     return <TrackingParcel id={Array.isArray(id) ? id[0] : id} />;

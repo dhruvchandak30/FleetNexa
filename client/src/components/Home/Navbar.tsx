@@ -75,7 +75,7 @@ const Navbar = () => {
                         </Link>
                         {user ? (
                             <>
-                                {user.type === 'admin' ? (
+                                {user.type === 'admin' && (
                                     <>
                                         <Link href="/admin/driver">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
@@ -93,7 +93,17 @@ const Navbar = () => {
                                             </button>
                                         </Link>
                                     </>
-                                ) : (
+                                )}
+                                {user.type === 'driver' && <div>
+                                    <Link href="/mybookings">
+                                            <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
+                                                Bookings
+                                            </button>
+                                        </Link>
+                                 
+                                    
+                                    </div>}
+                                {user.type === 'user' && (
                                     <>
                                         <Link href="/book">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
@@ -107,6 +117,7 @@ const Navbar = () => {
                                         </Link>
                                     </>
                                 )}
+
                                 <button
                                     onClick={handleLogout}
                                     className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200"

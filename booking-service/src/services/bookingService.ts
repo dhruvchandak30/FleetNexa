@@ -195,14 +195,27 @@ export const getUserBookings = async (userId: number) => {
 };
 
 export const getDriverBookings = async (driverId: number) => {
+    console.log('Driver Id', driverId);
     const { data, error } = await supabase
         .from('bookings')
         .select('*')
         .eq('driver_id', driverId);
 
     if (error) {
+        console.log(error);
         throw new Error(`Error fetching driver bookings: ${error.message}`);
     }
 
     return data;
 };
+
+export const acceptBooking = async (bookingId: number) => {
+    const { error } = await supabase
+        .from('bookings')
+        .update({ status: 'On the way' })
+        .eq('id', bookingId);
+
+    if (error) {
+        throw new Error(`Error accepting booking: ${error.message}`);
+    }
+}
