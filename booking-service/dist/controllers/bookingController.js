@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createBooking = void 0;
+exports.getBookingById = exports.getBookings = exports.createBooking = void 0;
 const bookingService = __importStar(require("../services/bookingService"));
 const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -47,3 +47,29 @@ const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createBooking = createBooking;
+const getBookings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookings = yield bookingService.getBookingsByUserId(req.body.user_id);
+        return res.status(200).json(bookings);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.getBookings = getBookings;
+const getBookingById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const booking = yield bookingService.getBookingById(req.body.booking_id);
+        return res.status(200).json(booking);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.getBookingById = getBookingById;

@@ -59,7 +59,25 @@ const BookingPage = () => {
         e.preventDefault();
         setSuccessMessage('');
         setErrorMessage('');
-        setLoading(true); // Start loading
+        setLoading(true);
+
+        if (!user?.id) {
+            setErrorMessage('You must be logged in to create a booking.');
+            setLoading(false);
+            return;
+        }
+
+        if (
+            !pickupLocation ||
+            !dropoffLocation ||
+            !capacity ||
+            !vehicleType ||
+            !bookingTime
+        ) {
+            setErrorMessage('Please fill in all required fields.');
+            setLoading(false);
+            return;
+        }
 
         try {
             const pickupCoords = await fetchCoordinates(pickupLocation);
@@ -69,7 +87,7 @@ const BookingPage = () => {
 
             if (pickupCoords && dropoffCoords) {
                 const bookingData = {
-                    user_id: user?.id,
+                    user_id: user.id,
                     pickup_location: pickupCoords,
                     dropoff_location: dropoffCoords,
                     capacity,
@@ -99,33 +117,23 @@ const BookingPage = () => {
                 } else {
                     const errorResult = await response.json();
                     setErrorMessage(
-                        errorResult.error || 'Error with booking request'
+                        errorResult.error ||
+                            'There was an issue with your booking. Please try again.'
                     );
                 }
             } else {
                 setErrorMessage(
-                    'Could not fetch coordinates for one or both locations'
+                    'Could not fetch coordinates for one or both locations.'
                 );
             }
         } catch (error) {
-            //@ts-ignore
-            setErrorMessage('Failed to send booking request: ' + error.message);
+            console.log(error);
+            setErrorMessage(
+                'An unexpected error occurred. Please try again later.'
+            );
         } finally {
             setLoading(false);
         }
-    };
-
-    const formatBookingTime = (bookingTime: string) => {
-        const date = new Date(bookingTime);
-        const options: Intl.DateTimeFormatOptions = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-        };
-        return date.toLocaleString('en-US', options);
     };
 
     return (
@@ -138,7 +146,7 @@ const BookingPage = () => {
                     Book Your Ride
                 </h1>
 
-                {loading ? ( // Conditional rendering for loading
+                {loading ? (
                     <div className="flex justify-center items-center h-32">
                         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#A9592C]"></div>
                     </div>
@@ -270,6 +278,10 @@ const BookingPage = () => {
                         <p className="text-lg text-gray-800">
                             <span className="font-bold">Estimated Cost:</span> $
                             {estimatedCost.toFixed(2)}
+                        </p>
+                        <p className="text-lg text-gray-800">
+                            <span className="font-bold">Status:</span> Waiting
+                            for driver to accept...
                         </p>
                     </div>
                 )}

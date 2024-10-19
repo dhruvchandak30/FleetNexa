@@ -23,6 +23,18 @@ const Navbar = () => {
         setUser(null);
     };
 
+    const handleLinkClick = (id: string) => {
+        if (isOpen) {
+            setIsOpen(false);
+        }
+
+        if (window.location.pathname !== '/') {
+            window.location.href = '/#' + id;
+        } else {
+            scrollToSection(id);
+        }
+    };
+
     return (
         <nav className="bg-gradient-to-r from-green-100 to-gray-100 shadow-md w-full fixed top-0 z-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,14 +47,14 @@ const Navbar = () => {
                         </Link>
                     </div>
                     <div className="hidden md:flex space-x-8 items-center">
-                        <Link href="/" onClick={() => scrollToSection('home')}>
+                        <Link href="/" onClick={() => handleLinkClick('home')}>
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Home
                             </span>
                         </Link>
                         <Link
                             href="#about-us"
-                            onClick={() => scrollToSection('about-us')}
+                            onClick={() => handleLinkClick('about-us')}
                         >
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 About us
@@ -50,16 +62,13 @@ const Navbar = () => {
                         </Link>
                         <Link
                             href="#services"
-                            onClick={() => scrollToSection('services')}
+                            onClick={() => handleLinkClick('services')}
                         >
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link
-                            href="#contact"
-                            onClick={() => scrollToSection('contact')}
-                        >
+                        <Link href="/contact">
                             <span className="text-gray-700 text-lg hover:text-[#A9592C] cursor-pointer">
                                 Contact us
                             </span>
@@ -91,7 +100,7 @@ const Navbar = () => {
                                                 Book now
                                             </button>
                                         </Link>
-                                        <Link href="/track/dfd">
+                                        <Link href="/track">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
                                                 Track Orders
                                             </button>
@@ -146,14 +155,14 @@ const Navbar = () => {
             {isOpen && (
                 <div className="md:hidden">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link href="/" onClick={() => scrollToSection('home')}>
+                        <Link href="/" onClick={() => handleLinkClick('home')}>
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Home
                             </span>
                         </Link>
                         <Link
                             href="#about-us"
-                            onClick={() => scrollToSection('about-us')}
+                            onClick={() => handleLinkClick('about-us')}
                         >
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 About us
@@ -161,16 +170,13 @@ const Navbar = () => {
                         </Link>
                         <Link
                             href="#services"
-                            onClick={() => scrollToSection('services')}
+                            onClick={() => handleLinkClick('services')}
                         >
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Services
                             </span>
                         </Link>
-                        <Link
-                            href="#contact"
-                            onClick={() => scrollToSection('contact')}
-                        >
+                        <Link href="/contact">
                             <span className="block text-gray-700 text-lg hover:bg-gray-100 rounded-md px-3 py-2 cursor-pointer">
                                 Contact us
                             </span>
@@ -184,12 +190,12 @@ const Navbar = () => {
                                                 Drivers
                                             </span>
                                         </Link>
-                                        <Link href="admin/booking">
+                                        <Link href="/admin/booking">
                                             <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
                                                 Bookings
                                             </span>
                                         </Link>
-                                        <Link href="admin/vehicle">
+                                        <Link href="/admin/vehicle">
                                             <span className="block bg-[#A9592C] text-white text-lg text-center py-2 rounded hover:bg-opacity-90">
                                                 Vehicles
                                             </span>

@@ -20,18 +20,21 @@ const AddVehicle: React.FC = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('http://localhost:5001/api/vehicles', {
-                type,
-                license_plate: licensePlate,
-                capacity,
-            });
+            const response = await axios.post(
+                'http://localhost:5001/api/vehicles',
+                {
+                    type,
+                    license_plate: licensePlate,
+                    capacity,
+                }
+            );
 
             if (response.status === 201) {
                 setSuccess('Vehicle added successfully!');
                 setType('');
                 setLicensePlate('');
                 setCapacity('');
-                fetchVehicles(); 
+                fetchVehicles();
             }
         } catch (error) {
             setError('Failed to add vehicle. Please try again.');
@@ -40,23 +43,55 @@ const AddVehicle: React.FC = () => {
 
     const fetchVehicles = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/vehicles');
-            setVehicles(response.data);  
+            const response = await axios.get(
+                'http://localhost:5001/api/vehicles'
+            );
+            setVehicles(response.data);
         } catch (error) {
             setError('Failed to load vehicles.');
         }
     };
 
+    const [filters, setFilters] = useState({
+        capacity: '',
+        type: '',
+        status: '',
+    });
+
+    const handleFilterChange = (e: any) => {
+        const { name, value } = e.target;
+        setFilters({ ...filters, [name]: value });
+    };
+
+    const filteredVehicles = vehicles.filter(
+        (vehicle: { capacity: string; type: string; status: string }) => {
+            const capacityMatch = filters.capacity
+                ? vehicle.capacity.toString() === filters.capacity
+                : true;
+            const typeMatch = filters.type
+                ? vehicle.type === filters.type
+                : true;
+
+            const StatusMatch = filters.status
+                ? vehicle.status === filters.status
+                : true;
+            return capacityMatch && typeMatch && StatusMatch;
+        }
+    );
+
     useEffect(() => {
-        fetchVehicles(); 
+        fetchVehicles();
     }, []);
 
     return (
-        <div className="max-w-md mx-auto my-10 p-6 pt-12 bg-white rounded-lg shadow-md">
+        <div className="pt-12 my-10 ">
             <Heading text="Add Vehicle" />
             {error && <p className="text-red-500">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={handleSubmit}
+                className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"
+            >
                 <div className="mb-4">
                     <label className="block text-gray-700">Type</label>
                     <select
@@ -65,13 +100,14 @@ const AddVehicle: React.FC = () => {
                         required
                         className="mt-1 p-2 border border-gray-300 rounded w-full"
                     >
-                        <option value="" disabled>Select vehicle type</option>
+                        <option value="" disabled>
+                            Select vehicle type
+                        </option>
                         <option value="SUV">SUV</option>
                         <option value="Sedan">Sedan</option>
                         <option value="Truck">Truck</option>
                         <option value="Van">Van</option>
                         <option value="Motorcycle">Motorcycle</option>
-                        <option value="Pickup">Pickup</option>
                     </select>
                 </div>
                 <div className="mb-4">
@@ -92,7 +128,9 @@ const AddVehicle: React.FC = () => {
                         required
                         className="mt-1 p-2 border border-gray-300 rounded w-full"
                     >
-                        <option value="" disabled>Select capacity (seats)</option>
+                        <option value="" disabled>
+                            Select capacity (seats)
+                        </option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
@@ -112,21 +150,76 @@ const AddVehicle: React.FC = () => {
                 </button>
             </form>
 
-            <div className="mt-10">
+            <div className="mt-10 max-w-7xl mx-auto">
                 <Heading text="Existing Vehicles" />
-                {vehicles.length > 0 ? (
-                    <ul className="mt-4">
-                        {vehicles.map((vehicle: any) => (
-                            <li key={vehicle.id} className="mb-4 p-4 bg-gray-100 rounded shadow">
-                                 <p><strong>Id:</strong> {vehicle.id}</p>
-                                <p><strong>Type:</strong> {vehicle.type}</p>
-                                <p><strong>License Plate:</strong> {vehicle.license_plate}</p>
-                                <p><strong>Capacity:</strong> {vehicle.capacity}</p>
+
+                <div className="mb-4 flex lg:flex-row flex-col lg:mx-0 mx-4 gap-3 ">
+                    <label className=" flex my-auto">Filter by Type:</label>
+                    <select
+                        name="type"
+                        value={filters.type}
+                        onChange={handleFilterChange}
+                        className="border p-2 rounded  "
+                    >
+                        <option value="">All</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Van">Van</option>
+                        <option value="Motorcycle">Motorcycle</option>
+                    </select>
+
+                    <label className=" flex my-auto">Filter by Capacity:</label>
+                    <input
+                        type="number"
+                        name="capacity"
+                        value={filters.capacity}
+                        onChange={handleFilterChange}
+                        placeholder="Enter capacity"
+                        className="border p-2 rounded"
+                    />
+                    <label className=" flex my-auto">Filter by Status:</label>
+                    <select
+                        name="status"
+                        value={filters.status}
+                        onChange={handleFilterChange}
+                        className="border p-2 rounded"
+                    >
+                        <option value="">All</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                        <option value="active">Active</option>
+                    </select>
+                </div>
+
+                {filteredVehicles.length > 0 ? (
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredVehicles.map((vehicle: any) => (
+                            <li
+                                key={vehicle.id}
+                                className="p-4 bg-gray-100 rounded shadow"
+                            >
+                                <p>
+                                    <strong>Type:</strong> {vehicle.type}
+                                </p>
+                                <p>
+                                    <strong>License Plate:</strong>{' '}
+                                    {vehicle.license_plate}
+                                </p>
+                                <p>
+                                    <strong>Capacity:</strong>{' '}
+                                    {vehicle.capacity}
+                                </p>
+                                <p>
+                                    <strong>Status:</strong> {vehicle.status}
+                                </p>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p>No vehicles found.</p>
+                    <p className="text-center font-bold text-xl my-8">
+                        No vehicles found.
+                    </p>
                 )}
             </div>
         </div>

@@ -42,9 +42,7 @@ export const createBookingWithDriverAndVehicle = async (
     console.log('Vehicle Data', vehicleData);
     const vehicle = vehicleData[0];
 
-
-    const pricingServiceUrl = 'http://localhost:5002/calculate-cost'; 
-
+    const pricingServiceUrl = 'http://localhost:5002/calculate-cost';
     const pricingResponse = await fetch(pricingServiceUrl, {
         method: 'POST',
         headers: {
@@ -85,28 +83,88 @@ export const createBookingWithDriverAndVehicle = async (
         throw new Error(`Error creating booking: ${bookingError.message}`);
     }
     console.log(bookingDataResult, driver, vehicle);
-    const data = [];
-    data.push(driver);
-    data.push(vehicle);
-    data.push(estimated_cost)
+
+    const { error: vehicleUpdateError } = await supabase
+        .from('vehicles')
+        .update({ status: 'unavailable' })
+        .eq('id', vehicle.id);
+
+    if (vehicleUpdateError) {
+        console.log('Vehicle Status Update Error', vehicleUpdateError);
+        throw new Error(
+            `Error updating vehicle status: ${vehicleUpdateError.message}`
+        );
+    }
+
+    const { error: driverUpdateError } = await supabase
+        .from('drivers')
+        .update({ status: 'active' })
+        .eq('id', driver.id);
+
+    if (driverUpdateError) {
+        console.log('Driver Status Update Error', driverUpdateError);
+        throw new Error(
+            `Error updating driver status: ${driverUpdateError.message}`
+        );
+    }
+
+    const data = [driver, vehicle, estimated_cost];
     return data;
 };
 
-
 export const getBookingById = async (bookingId: number) => {
-    const { data, error } = await supabase
+    const { data: booking, error: bookingError } = await supabase
         .from('bookings')
         .select('*')
         .eq('id', bookingId)
         .single();
 
+    if (bookingError) {
+        throw new Error(`Error fetching booking: ${bookingError.message}`);
+    }
+
+    const { driver_id, vehicle_id } = booking;
+
+    const { data: driver, error: driverError } = await supabase
+        .from('drivers')
+        .select('*')
+        .eq('id', driver_id)
+        .single();
+
+    if (driverError) {
+        throw new Error(`Error fetching driver: ${driverError.message}`);
+    }
+
+    const { data: vehicle, error: vehicleError } = await supabase
+        .from('vehicles')
+        .select('*')
+        .eq('id', vehicle_id)
+        .single();
+
+    if (vehicleError) {
+        throw new Error(`Error fetching vehicle: ${vehicleError.message}`);
+    }
+
+    return {
+        booking,
+        driver,
+        vehicle,
+    };
+};
+
+export const getBookingsByUserId = async (user_id: number) => {
+    const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', user_id)
+        .eq('status', 'pending');
+
     if (error) {
-        throw new Error(`Error fetching booking: ${error.message}`);
+        throw new Error(`Error fetching bookings: ${error.message}`);
     }
 
     return data;
 };
-
 export const updateBookingStatus = async (
     bookingId: number,
     status: string

@@ -14,6 +14,8 @@ interface Driver {
     status: string;
     created_at?: string;
     updated_at?: string;
+    booking_number?: number;
+    rating?: number;
 }
 
 const Drivers = () => {
@@ -26,10 +28,22 @@ const Drivers = () => {
     const [status, setStatus] = useState('available');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState({ status: '' });
+
+    const handleFilterChange = (e: any) => {
+        const { name, value } = e.target;
+        setFilters({ ...filters, [name]: value });
+    };
+
+    const filteredDrivers = drivers.filter((driver) => {
+        return filters.status ? driver.status === filters.status : true;
+    });
 
     const fetchDrivers = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/drivers');
+            const response = await axios.get(
+                'http://localhost:5001/api/drivers'
+            );
             setDrivers(response.data);
             setError('');
         } catch (err) {
@@ -55,15 +69,14 @@ const Drivers = () => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-
         setLoading(true);
         try {
             const driverData: Omit<Driver, 'id' | 'created_at' | 'updated_at'> =
                 {
                     name,
                     email,
-                    password_hash:hashedPassword,
-                    phone_number:phoneNumber,
+                    password_hash: hashedPassword,
+                    phone_number: phoneNumber,
                     status,
                 };
             await axios.post('http://localhost:5001/api/drivers', driverData);
@@ -144,7 +157,7 @@ const Drivers = () => {
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         className="border border-gray-300 p-3 rounded shadow-sm focus:outline-none focus:ring focus:ring-[#A9592C] focus:border-transparent"
                     />
-                
+
                     <select
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
@@ -164,36 +177,56 @@ const Drivers = () => {
                 <h2 className="text-black text-xl mt-6 mb-4">
                     Existing Drivers
                 </h2>
-                <ul className="border border-gray-300 rounded-lg shadow-sm">
-                    {drivers.map((driver) => (
+                <div className="mb-4">
+                    <label className="mr-2">Filter by Status:</label>
+                    <select
+                        name="status"
+                        value={filters.status}
+                        onChange={handleFilterChange}
+                        className="border p-2 rounded"
+                    >
+                        <option value="">All</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                        <option value="active">Active</option>
+                    </select>
+                </div>
+
+                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 border border-gray-300 rounded-lg shadow-sm">
+                    {filteredDrivers.map((driver) => (
                         <li
                             key={driver.id}
-                            className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b last:border-b-0"
+                            className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-md border border-gray-200"
                         >
-                            <div className="flex flex-col md:flex-row md:items-center">
-                            <span className="text-black mr-4">
+                            <div className="flex flex-col mb-4">
+                                <span className="text-black mb-2">
                                     <strong>Id:</strong> {driver.id}
                                 </span>
-                                <span className="text-black mr-4">
+                                <span className="text-black mb-2">
                                     <strong>Name:</strong> {driver.name}
                                 </span>
-                                <span className="text-black mr-4">
+                                <span className="text-black mb-2">
                                     <strong>Email:</strong> {driver.email}
                                 </span>
-                                <span className="text-black mr-4">
-                                    <strong>Phone:</strong> {driver.phone_number}
+                                <span className="text-black mb-2">
+                                    <strong>Phone:</strong>{' '}
+                                    {driver.phone_number}
                                 </span>
-                                <span className="text-black mr-4">
-                                    <strong>Vehicle ID:</strong>{' '}
-                                    {driver.vehicle_id ?? 'N/A'}
-                                </span>
-                                <span className="text-black">
+                                <span className="text-black mb-2">
                                     <strong>Status:</strong> {driver.status}
+                                </span>
+                                <span className="text-black mb-2">
+                                    <strong>Number of Bookings:</strong>{' '}
+                                    {driver.booking_number}
+                                </span>
+                                <span className="text-black mb-2">
+                                    <strong>Average Rating:</strong>{' '}
+                                    {driver.rating}
                                 </span>
                             </div>
                             <button
                                 onClick={() => deleteDriver(driver.id!)}
-                                className="bg-red-500 text-white p-2 rounded mt-2 md:mt-0 hover:bg-red-600 shadow-md"
+                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 shadow-md"
                             >
                                 Delete
                             </button>
