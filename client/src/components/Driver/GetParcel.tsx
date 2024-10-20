@@ -185,7 +185,7 @@ const GetParcel = ({ id }: GetParcelProps) => {
                         Successfully Delivered!
                     </h2>
                     <p className="text-gray-700 text-lg">
-                        {bookingDetails.estimated_cost}$ has been credited to
+                        {bookingDetails.estimated_cost}Rs has been credited to
                         your account.
                     </p>
                     <p>Thank You!!</p>
