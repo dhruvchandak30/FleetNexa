@@ -15,6 +15,7 @@ interface Booking {
     driver: { name: string; phone_number: string };
     status: 'pending' | 'On the way' | 'Arrived' | 'In transit';
     estimated_cost: number;
+    rating?: number;
 }
 
 const TrackingPage = () => {
@@ -22,6 +23,9 @@ const TrackingPage = () => {
     const router = useRouter();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [rating, setRating] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -38,6 +42,14 @@ const TrackingPage = () => {
                 );
                 const data = await response.json();
                 setBookings(data);
+
+                const initialRatingState: { [key: string]: number } = {};
+                data.forEach((booking: Booking) => {
+                    if (booking.rating) {
+                        initialRatingState[booking.id] = booking.rating;
+                    }
+                });
+                setRating(initialRatingState);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
             } finally {
@@ -49,7 +61,47 @@ const TrackingPage = () => {
     }, [user?.id]);
 
     const handleBookingClick = (booking: Booking) => {
-        router.push(`/trackparcel/${booking.id}`);
+        if (booking.status !== 'Arrived') {
+            router.push(`/trackparcel/${booking.id}`);
+        }
+    };
+
+    const handleRatingSubmit = async (bookingId: string) => {
+        console.log(bookingId);
+        const selectedRating = rating[bookingId];
+        if (!selectedRating) {
+            setErrorMessage('Please select a rating before submitting.');
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings/rate`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        bookingId: bookingId,
+                        rating: selectedRating,
+                    }),
+                }
+            );
+            if (response.ok) {
+                setSuccessMessage('Thank you for your rating!');
+                setErrorMessage('');
+                setRating((prev) => ({
+                    ...prev,
+                    [bookingId]: selectedRating,
+                }));
+            } else {
+                throw new Error('Failed to submit rating.');
+            }
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            setErrorMessage('Error submitting rating. Please try again.');
+        }
     };
 
     return (
@@ -98,9 +150,53 @@ const TrackingPage = () => {
                                     <strong>Drop-off:</strong>{' '}
                                     {booking.dropoff_location.formatted}
                                 </p>
+
+                                {booking.status === 'Arrived' && (
+                                    <div className="mt-4">
+                                        <p className="text-gray-800">
+                                            <strong>Rate the Driver:</strong>
+                                        </p>
+                                        <div className="flex space-x-2">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    className={`text-2xl cursor-pointer ${
+                                                        star <=
+                                                        (rating[booking.id] ||
+                                                            0)
+                                                            ? 'text-yellow-400'
+                                                            : 'text-gray-300'
+                                                    }`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setRating((prev) => ({
+                                                            ...prev,
+                                                            [booking.id]: star,
+                                                        }));
+                                                    }}
+                                                >
+                                                    ★
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <button
+                                            className="mt-2 bg-[#A9592C] text-white px-4 py-2 rounded"
+                                            onClick={() =>
+                                                handleRatingSubmit(booking.id)
+                                            }
+                                        >
+                                            Submit Rating
+                                        </button>
+                                    </div>
+                                )}
                             </li>
                         ))}
                 </ul>
+            )}
+
+            {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+            {successMessage && (
+                <p className="text-green-600">{successMessage}</p>
             )}
         </div>
     );

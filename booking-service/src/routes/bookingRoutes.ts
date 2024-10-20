@@ -6,6 +6,7 @@ import {
     getDriverBookings,
     acceptBooking,
     updateBookingStatus,
+    updateBookingRate
 } from '../controllers/bookingController';
 
 const router = Router();
@@ -21,5 +22,7 @@ router.post('/getDriverBookings', getDriverBookings);
 router.post('/acceptBooking', acceptBooking);
 //@ts-ignore
 router.post('/updateBookingStatus', updateBookingStatus);
+//@ts-ignore
+router.post('/rate', updateBookingRate);
 
 export default router;

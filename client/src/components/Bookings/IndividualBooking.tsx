@@ -6,9 +6,19 @@ import Heading from '@/components/Utils/Heading';
 interface Booking {
     id: number;
     name: string;
-    pickup_location: string;
-    dropoff_location: string;
-    estimatedCost: number;
+    pickup_location: {
+        lat: any;
+        lng: any;
+        formatted: any;
+        timezone: any;
+    };
+    dropoff_location: {
+        lat: any;
+        lng: any;
+        formatted: any;
+        timezone: any;
+    };
+    estimated_cost: number;
     booking_time: string;
     status: string;
     driver: {
@@ -20,6 +30,7 @@ interface Booking {
         license_plate: string;
         capacity: number;
     };
+    rating: number;
 }
 
 const BookingDetails = ({ id }: { id: string }) => {
@@ -70,17 +81,16 @@ const BookingDetails = ({ id }: { id: string }) => {
                         <div className="bg-gray-100 p-4 rounded-lg shadow">
                             <p className="text-gray-600">
                                 <strong>Pickup Location:</strong>{' '}
-                                {booking?.pickup_location}
+                                {booking?.pickup_location.formatted}
                             </p>
                             <p className="text-gray-600">
                                 <strong>Dropoff Location:</strong>{' '}
-                                {booking?.dropoff_location}
+                                {booking?.dropoff_location.formatted}
                             </p>
                             <p className="text-gray-600">
                                 <strong>Estimated Cost:</strong> $
-                                {booking?.estimatedCost.toFixed(2)}
+                                {booking?.estimated_cost.toFixed(2)}
                             </p>
-
                             <p className="text-gray-600">
                                 <strong>Status:</strong> {booking?.status}
                             </p>
@@ -123,6 +133,17 @@ const BookingDetails = ({ id }: { id: string }) => {
                                 {booking?.vehicle.capacity}
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                <div className="mt-8">
+                    <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                        Rating
+                    </h3>
+                    <div className="bg-yellow-100 p-4 rounded-lg shadow">
+                        <p className="text-gray-700">
+                            <strong>Rating:</strong> {booking?.rating}/5
+                        </p>
                     </div>
                 </div>
             </div>

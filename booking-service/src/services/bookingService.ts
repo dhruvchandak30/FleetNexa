@@ -42,7 +42,8 @@ export const createBookingWithDriverAndVehicle = async (
     console.log('Vehicle Data', vehicleData);
     const vehicle = vehicleData[0];
 
-    const pricingServiceUrl = 'https://pricing-service-seven.vercel.app/calculate-cost';
+    const pricingServiceUrl =
+        'https://pricing-service-seven.vercel.app/calculate-cost';
     const pricingResponse = await fetch(pricingServiceUrl, {
         method: 'POST',
         headers: {
@@ -156,7 +157,7 @@ export const getBookingsByUserId = async (user_id: number) => {
     const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .eq('user_id', user_id)
+        .eq('user_id', user_id);
 
     if (error) {
         throw new Error(`Error fetching bookings: ${error.message}`);
@@ -164,10 +165,21 @@ export const getBookingsByUserId = async (user_id: number) => {
 
     return data;
 };
+
 export const updateBookingStatus = async (
     bookingId: number,
     status: string
 ) => {
+    const { data: bookingData, error: bookingError } = await supabase
+        .from('bookings')
+        .select('driver_id, vehicle_id')
+        .eq('id', bookingId)
+        .single();
+
+    if (bookingError) {
+        throw new Error(`Error fetching booking data: ${bookingError.message}`);
+    }
+
     const { data, error } = await supabase
         .from('bookings')
         .update({ status, updated_at: new Date() })
@@ -175,6 +187,32 @@ export const updateBookingStatus = async (
 
     if (error) {
         throw new Error(`Error updating booking status: ${error.message}`);
+    }
+
+    if (status === 'Arrived' && bookingData) {
+        const { driver_id, vehicle_id } = bookingData;
+
+        const { error: driverError } = await supabase
+            .from('drivers')
+            .update({ status: 'available' })
+            .eq('id', driver_id);
+
+        if (driverError) {
+            throw new Error(
+                `Error updating driver status: ${driverError.message}`
+            );
+        }
+
+        const { error: vehicleError } = await supabase
+            .from('vehicles')
+            .update({ status: 'available' })
+            .eq('id', vehicle_id);
+
+        if (vehicleError) {
+            throw new Error(
+                `Error updating vehicle status: ${vehicleError.message}`
+            );
+        }
     }
 
     return data;
@@ -217,4 +255,68 @@ export const acceptBooking = async (bookingId: number) => {
     if (error) {
         throw new Error(`Error accepting booking: ${error.message}`);
     }
-}
+};
+
+export const updateBookingRate = async (bookingId: number, rating: number) => {
+    console.log(bookingId, rating);
+
+    const { data: bookingData, error: bookingError } = await supabase
+        .from('bookings')
+        .select('driver_id')
+        .eq('id', bookingId)
+        .single();
+
+    if (bookingError) {
+        console.log(bookingError);
+        throw new Error(`Error fetching driver ID: ${bookingError.message}`);
+    }
+
+    if (!bookingData) {
+        throw new Error('Booking not found');
+    }
+
+    const driverId = bookingData.driver_id;
+
+    const { data: driverData, error: driverError } = await supabase
+        .from('drivers')
+        .select('rating, total_bookings')
+        .eq('id', driverId)
+        .single();
+
+    if (driverError) {
+        console.log(driverError);
+        throw new Error(`Error fetching driver data: ${driverError.message}`);
+    }
+
+    if (!driverData) {
+        throw new Error('Driver not found');
+    }
+
+    const { rating: currentRating, total_bookings } = driverData;
+    const newRating =
+        (currentRating * total_bookings + rating) / (total_bookings + 1);
+
+    const { error: bookingUpdateError } = await supabase
+        .from('bookings')
+        .update({ rating })
+        .eq('id', bookingId);
+
+    if (bookingUpdateError) {
+        console.log(bookingUpdateError);
+        throw new Error(
+            `Error updating booking rate: ${bookingUpdateError.message}`
+        );
+    }
+
+    const { error: driverUpdateError } = await supabase
+        .from('drivers')
+        .update({ rating: newRating, total_bookings: total_bookings + 1 })
+        .eq('id', driverId);
+
+    if (driverUpdateError) {
+        console.log(driverUpdateError);
+        throw new Error(
+            `Error updating driver rating: ${driverUpdateError.message}`
+        );
+    }
+};

@@ -15,6 +15,7 @@ interface Driver {
     created_at?: string;
     updated_at?: string;
     booking_number?: number;
+    total_bookings?: number;
     rating?: number;
 }
 
@@ -28,16 +29,12 @@ const Drivers = () => {
     const [status, setStatus] = useState('available');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [filters, setFilters] = useState({ status: '' });
+    const [filters, setFilters] = useState({ status: '', sortBy: '' });
 
     const handleFilterChange = (e: any) => {
         const { name, value } = e.target;
         setFilters({ ...filters, [name]: value });
     };
-
-    const filteredDrivers = drivers.filter((driver) => {
-        return filters.status ? driver.status === filters.status : true;
-    });
 
     const fetchDrivers = async () => {
         try {
@@ -79,7 +76,10 @@ const Drivers = () => {
                     phone_number: phoneNumber,
                     status,
                 };
-            await axios.post('https://admin-service-olive.vercel.app/api/drivers', driverData);
+            await axios.post(
+                'https://admin-service-olive.vercel.app/api/drivers',
+                driverData
+            );
             fetchDrivers();
             resetForm();
             setError('');
@@ -93,11 +93,29 @@ const Drivers = () => {
 
     const deleteDriver = async (id: number) => {
         try {
-            await axios.delete(`https://admin-service-olive.vercel.app/api/drivers/${id}`);
+            await axios.delete(
+                `https://admin-service-olive.vercel.app/api/drivers/${id}`
+            );
             fetchDrivers();
             setError('');
         } catch (err) {
             setError('Failed to delete driver. Please try again later.');
+        }
+    };
+
+    const toggleDriverAvailability = async (
+        id: number,
+        currentStatus: string
+    ) => {
+        const newStatus =
+            currentStatus === 'available' ? 'unavailable' : 'available';
+        try {
+            await axios.patch(`https://admin-service-olive.vercel.app/api/drivers/${id}`, {
+                status: newStatus,
+            });
+            fetchDrivers();
+        } catch (err) {
+            setError('Failed to update driver status. Please try again later.');
         }
     };
 
@@ -107,13 +125,44 @@ const Drivers = () => {
         setPassword('');
         setPhoneNumber('');
         setVehicleId(undefined);
-        setStatus('active');
+        setStatus('available');
         setError('');
     };
 
     useEffect(() => {
         fetchDrivers();
     }, []);
+
+    const sortDrivers = (drivers: Driver[]) => {
+        switch (filters.sortBy) {
+            case 'ratingHighToLow':
+                return drivers.sort(
+                    (a, b) => (b.rating || 0) - (a.rating || 0)
+                );
+            case 'ratingLowToHigh':
+                return drivers.sort(
+                    (a, b) => (a.rating || 0) - (b.rating || 0)
+                );
+            case 'bookingsHighToLow':
+                return drivers.sort(
+                    (a, b) => (b.total_bookings || 0) - (a.total_bookings || 0)
+                );
+            case 'bookingsLowToHigh':
+                return drivers.sort(
+                    (a, b) => (a.total_bookings || 0) - (b.total_bookings || 0)
+                );
+            case 'alphabetical':
+                return drivers.sort((a, b) => a.name.localeCompare(b.name));
+            default:
+                return drivers;
+        }
+    };
+
+    const filteredDrivers = sortDrivers(
+        drivers.filter((driver) => {
+            return filters.status ? driver.status === filters.status : true;
+        })
+    );
 
     return (
         <div className="bg-gray-50 p-8 pt-24 rounded-lg shadow-md">
@@ -177,21 +226,48 @@ const Drivers = () => {
                 <h2 className="text-black text-xl mt-6 mb-4">
                     Existing Drivers
                 </h2>
-                <div className="mb-4">
-                    <label className="mr-2">Filter by Status:</label>
-                    <select
-                        name="status"
-                        value={filters.status}
-                        onChange={handleFilterChange}
-                        className="border p-2 rounded"
-                    >
-                        <option value="">All</option>
-                        <option value="available">Available</option>
-                        <option value="unavailable">Unavailable</option>
-                        <option value="active">Active</option>
-                    </select>
+                <div className="flex flex-row gap-8">
+                    <div className="mb-4">
+                        <label className="mr-2">Filter by Status:</label>
+                        <select
+                            name="status"
+                            value={filters.status}
+                            onChange={handleFilterChange}
+                            className="border p-2 rounded"
+                        >
+                            <option value="">All</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                            <option value="active">Active</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="mr-2">Sort by:</label>
+                        <select
+                            name="sortBy"
+                            value={filters.sortBy}
+                            onChange={handleFilterChange}
+                            className="border p-2 rounded"
+                        >
+                            <option value="">None</option>
+                            <option value="ratingHighToLow">
+                                Rating (High to Low)
+                            </option>
+                            <option value="ratingLowToHigh">
+                                Rating (Low to High)
+                            </option>
+                            <option value="bookingsHighToLow">
+                                Bookings (High to Low)
+                            </option>
+                            <option value="bookingsLowToHigh">
+                                Bookings (Low to High)
+                            </option>
+                            <option value="alphabetical">
+                                Alphabetical Order
+                            </option>
+                        </select>
+                    </div>
                 </div>
-
                 <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 border border-gray-300 rounded-lg shadow-sm">
                     {filteredDrivers.map((driver) => (
                         <li
@@ -213,23 +289,47 @@ const Drivers = () => {
                                     {driver.phone_number}
                                 </span>
                                 <span className="text-black mb-2">
-                                    <strong>Status:</strong> {driver.status}
+                                    <strong>Status:</strong>{' '}
+                                    {driver.status.charAt(0).toUpperCase() +
+                                        driver.status.slice(1)}
                                 </span>
                                 <span className="text-black mb-2">
                                     <strong>Number of Bookings:</strong>{' '}
-                                    {driver.booking_number}
+                                    {driver.total_bookings}
                                 </span>
                                 <span className="text-black mb-2">
                                     <strong>Average Rating:</strong>{' '}
                                     {driver.rating}
                                 </span>
                             </div>
-                            <button
-                                onClick={() => deleteDriver(driver.id!)}
-                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 shadow-md"
-                            >
-                                Delete
-                            </button>
+                            <div className="flex gap-2">
+                                {driver.status !== 'active' && (
+                                    <button
+                                        onClick={() =>
+                                            toggleDriverAvailability(
+                                                driver.id!,
+                                                driver.status
+                                            )
+                                        }
+                                        className={`p-2 rounded shadow-md ${
+                                            driver.status === 'available'
+                                                ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                                                : 'bg-green-500 hover:bg-green-600 text-white'
+                                        }`}
+                                    >
+                                        {driver.status === 'available'
+                                            ? 'Make Unavailable'
+                                            : 'Make Available'}
+                                    </button>
+                                )}
+
+                                <button
+                                    onClick={() => deleteDriver(driver.id!)}
+                                    className="bg-red-500 text-white p-2 rounded hover:bg-red-600 shadow-md"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>

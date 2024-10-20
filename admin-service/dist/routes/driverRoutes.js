@@ -5,4 +5,6 @@ const driverController_1 = require("../controllers/driverController");
 const router = (0, express_1.Router)();
 router.post('/', driverController_1.createDriver);
 router.get('/', driverController_1.getAllDrivers);
+router.delete('/:id', driverController_1.deleteDriver);
+router.patch('/:id', driverController_1.updateDriverStatus);
 exports.default = router;

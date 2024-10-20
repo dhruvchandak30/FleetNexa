@@ -10,6 +10,7 @@ interface Booking {
     dropoff_location: { formatted: string };
     status: 'pending' | 'On the way' | 'Arrived' | 'In transit';
     estimated_cost: number;
+    rating?: number;
 }
 
 const MyBookings = () => {
@@ -35,6 +36,7 @@ const MyBookings = () => {
 
                 const data = await response.json();
                 if (response.ok) {
+                    console.log(data);
                     setBookings(data.bookings || []);
                 } else {
                     setError(data.message || 'Failed to fetch bookings.');
@@ -74,6 +76,27 @@ const MyBookings = () => {
         }
     };
 
+    const renderStars = (rate: number) => {
+        const totalStars = 5;
+        const filledStars = Math.round(rate);
+        return (
+            <>
+                {[...Array(totalStars)].map((_, i) => (
+                    <span
+                        key={i}
+                        className={
+                            i < filledStars
+                                ? 'text-yellow-500'
+                                : 'text-gray-400'
+                        }
+                    >
+                        {i < filledStars ? '★' : '☆'}
+                    </span>
+                ))}
+            </>
+        );
+    };
+
     if (loading) return <p className="mt-12 py-12">Loading bookings...</p>;
     if (error) return <p className="mt-12 py-12">{error}</p>;
 
@@ -84,67 +107,78 @@ const MyBookings = () => {
                 <p className="text-center text-gray-600">No bookings found.</p>
             ) : (
                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                    {bookings.length > 0 &&
-                        bookings.map((booking, index) => (
-                            <div
-                                key={index}
-                                className="p-6 bg-white shadow-lg rounded-lg border border-[#A9592C] hover:shadow-xl transition-shadow duration-300"
-                            >
-                                <div className="mb-2">
-                                    <p className="text-sm text-gray-500 font-semibold">
-                                        Pickup Location
-                                    </p>
-                                    <p className="text-lg text-gray-800">
-                                        {booking.pickup_location.formatted}
-                                    </p>
-                                </div>
-                                <div className="mb-2">
-                                    <p className="text-sm text-gray-500 font-semibold">
-                                        Dropoff Location
-                                    </p>
-                                    <p className="text-lg text-gray-800">
-                                        {booking.dropoff_location.formatted}
-                                    </p>
-                                </div>
-                                <div className="mb-2">
-                                    <p className="text-sm text-gray-500 font-semibold">
-                                        Estimated Cost
-                                    </p>
-                                    <p className="text-lg text-gray-800">
-                                        ₹{booking.estimated_cost.toFixed(2)}
-                                    </p>
-                                </div>
+                    {bookings.map((booking, index) => (
+                        <div
+                            key={index}
+                            className="p-6 bg-white shadow-lg rounded-lg border border-[#A9592C] hover:shadow-xl transition-shadow duration-300"
+                        >
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-500 font-semibold">
+                                    Pickup Location
+                                </p>
+                                <p className="text-lg text-gray-800">
+                                    {booking.pickup_location.formatted}
+                                </p>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-500 font-semibold">
+                                    Dropoff Location
+                                </p>
+                                <p className="text-lg text-gray-800">
+                                    {booking.dropoff_location.formatted}
+                                </p>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-500 font-semibold">
+                                    Estimated Cost
+                                </p>
+                                <p className="text-lg text-gray-800">
+                                    ₹{booking.estimated_cost.toFixed(2)}
+                                </p>
+                            </div>
+
+                            {booking.rating !== undefined && (
                                 <div className="mt-4">
                                     <p className="text-sm text-gray-500 font-semibold">
-                                        Status
+                                        Rating
                                     </p>
-                                    <p
-                                        className={`text-lg font-medium ${
-                                            booking.status === 'pending'
-                                                ? 'text-yellow-600'
-                                                : booking.status ===
-                                                  'On the way'
-                                                ? 'text-blue-600'
-                                                : booking.status === 'Arrived'
-                                                ? 'text-green-600'
-                                                : 'text-purple-600'
-                                        }`}
-                                    >
-                                        {booking.status}
-                                    </p>
+                                    <div className="text-lg">
+                                        {renderStars(booking.rating)}
+                                    </div>
                                 </div>
-                                {booking.status === 'pending' && (
-                                    <button
-                                        onClick={() =>
-                                            handleAcceptBooking(booking.id)
-                                        }
-                                        className="mt-4 bg-[#A9592C] text-white px-4 py-2 rounded-lg hover:bg-[#8f4428] transition-colors duration-300"
-                                    >
-                                        Accept Booking
-                                    </button>
-                                )}
+                            )}
+
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500 font-semibold">
+                                    Status
+                                </p>
+                                <p
+                                    className={`text-lg font-medium ${
+                                        booking.status === 'pending'
+                                            ? 'text-yellow-600'
+                                            : booking.status === 'On the way'
+                                            ? 'text-blue-600'
+                                            : booking.status === 'Arrived'
+                                            ? 'text-green-600'
+                                            : 'text-purple-600'
+                                    }`}
+                                >
+                                    {booking.status}
+                                </p>
                             </div>
-                        ))}
+
+                            {booking.status === 'pending' && (
+                                <button
+                                    onClick={() =>
+                                        handleAcceptBooking(booking.id)
+                                    }
+                                    className="mt-4 bg-[#A9592C] text-white px-4 py-2 rounded-lg hover:bg-[#8f4428] transition-colors duration-300"
+                                >
+                                    Accept Booking
+                                </button>
+                            )}
+                        </div>
+                    ))}
                 </div>
             )}
         </div>

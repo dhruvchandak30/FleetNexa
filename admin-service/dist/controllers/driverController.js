@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDriver = exports.getAllDrivers = void 0;
+exports.updateDriverStatus = exports.deleteDriver = exports.createDriver = exports.getAllDrivers = void 0;
 const driverService = __importStar(require("../services/driverService"));
 const getAllDrivers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -55,3 +55,23 @@ const createDriver = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.createDriver = createDriver;
+const deleteDriver = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield driverService.deleteDriver(Number(req.params.id));
+        res.status(200).json({ message: 'Driver deleted' });
+    }
+    catch (error) {
+        res.status(400).json({ error: 'Error deleting driver' });
+    }
+});
+exports.deleteDriver = deleteDriver;
+const updateDriverStatus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield driverService.updateDriverStatus(Number(req.params.id), req.body.status);
+        res.status(200).json({ message: 'Driver status updated' });
+    }
+    catch (error) {
+        res.status(400).json({ error: 'Error updating driver status' });
+    }
+});
+exports.updateDriverStatus = updateDriverStatus;

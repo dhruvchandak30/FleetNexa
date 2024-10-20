@@ -9,11 +9,22 @@ interface Booking {
     user_id: number;
     driver_id?: number;
     vehicle_id?: number;
-    pickup_location: string;
-    dropoff_location: string;
+    pickup_location: {
+        lat: any;
+        lng: any;
+        formatted: any;
+        timezone: any;
+    };
+    dropoff_location: {
+        lat: any;
+        lng: any;
+        formatted: any;
+        timezone: any;
+    };
     booking_time?: Date;
     status: string;
-    estimatedCost: number;
+    estimated_cost: number;
+    rating: number;
 }
 
 const Bookings = () => {
@@ -33,20 +44,27 @@ const Bookings = () => {
         }
     };
 
-    const handleStatusUpdate = async (id: number, status: string) => {
+    const fetchDriver = async (id: number) => {
         try {
-            await axios.patch(`https://admin-service-olive.vercel.app/api/bookings/status`, {
-                id,
-                status,
-            });
-            fetchBookings();
-            setError('');
-        } catch (err) {
-            setError(
-                'Failed to update booking status. Please try again later.'
+            const response = await axios.get(
+                `https://admin-service-olive.vercel.app/api/drivers/${id}`
             );
+            return response.data;
+        } catch (err) {
+            return null;
         }
-    };
+    }
+
+    const fetchVehicle = async (id: number) => {
+        try {
+            const response = await axios.get(
+                `https://admin-service-olive.vercel.app/api/vehicles/${id}`
+            );
+            return response.data;
+        } catch (err) {
+            return null;
+        }
+    }
 
     useEffect(() => {
         fetchBookings();
@@ -57,9 +75,9 @@ const Bookings = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen py-8">
+        <div className="bg-gray-100 min-h-screen py-8 my-12">
             <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
-                <Heading text="Manage Your Bookings" />
+                <Heading text="Manage Bookings" />
 
                 <h2 className="text-xl text-gray-800 mt-6 mb-4 font-semibold">
                     Existing Bookings
@@ -82,8 +100,8 @@ const Bookings = () => {
                                     }
                                 >
                                     <p className="text-gray-700 font-medium">
-                                        {booking.pickup_location} to{' '}
-                                        {booking.dropoff_location}
+                                        {booking.pickup_location.formatted} to{' '}
+                                        {booking.dropoff_location.formatted}
                                     </p>
                                     <p className="text-sm text-gray-500">
                                         Status:{' '}
@@ -91,63 +109,6 @@ const Bookings = () => {
                                             {booking.status}
                                         </span>
                                     </p>
-                                </div>
-
-                                <div className="flex space-x-2">
-                                    {booking.status === 'accepted' ? (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStatusUpdate(
-                                                    booking.id!,
-                                                    'rejected'
-                                                );
-                                            }}
-                                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
-                                        >
-                                            Reject
-                                        </button>
-                                    ) : booking.status === 'rejected' ? (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleStatusUpdate(
-                                                    booking.id!,
-                                                    'accepted'
-                                                );
-                                            }}
-                                            className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors"
-                                        >
-                                            Accept
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleStatusUpdate(
-                                                        booking.id!,
-                                                        'accepted'
-                                                    );
-                                                }}
-                                                className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors"
-                                            >
-                                                Accept
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleStatusUpdate(
-                                                        booking.id!,
-                                                        'rejected'
-                                                    );
-                                                }}
-                                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
-                                            >
-                                                Reject
-                                            </button>
-                                        </>
-                                    )}
                                 </div>
                             </li>
                         ))

@@ -73,3 +73,15 @@ export const updateBookingStatus = async (req: Request, res: Response): Promise<
         return res.status(500).json({ error: 'An unknown error occurred' });
     }
 }
+
+export const updateBookingRate = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        await bookingService.updateBookingRate(req.body.bookingId, req.body.rating);
+        return res.status(200).json({ message: 'Booking rated' });
+    } catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+}

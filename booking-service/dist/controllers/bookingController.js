@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBookingStatus = exports.acceptBooking = exports.getDriverBookings = exports.getBookingById = exports.getBookings = exports.createBooking = void 0;
+exports.updateBookingRate = exports.updateBookingStatus = exports.acceptBooking = exports.getDriverBookings = exports.getBookingById = exports.getBookings = exports.createBooking = void 0;
 const bookingService = __importStar(require("../services/bookingService"));
 const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -112,3 +112,16 @@ const updateBookingStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.updateBookingStatus = updateBookingStatus;
+const updateBookingRate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield bookingService.updateBookingRate(req.body.bookingId, req.body.rating);
+        return res.status(200).json({ message: 'Booking rated' });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            return res.status(400).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An unknown error occurred' });
+    }
+});
+exports.updateBookingRate = updateBookingRate;

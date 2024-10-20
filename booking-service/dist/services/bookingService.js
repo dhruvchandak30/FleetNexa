@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.acceptBooking = exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingsByUserId = exports.getBookingById = exports.createBookingWithDriverAndVehicle = void 0;
+exports.updateBookingRate = exports.acceptBooking = exports.getDriverBookings = exports.getUserBookings = exports.updateBookingStatus = exports.getBookingsByUserId = exports.getBookingById = exports.createBookingWithDriverAndVehicle = void 0;
 const supabaseClient_1 = require("../config/supabaseClient");
 const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(bookingData);
@@ -140,12 +140,37 @@ const getBookingsByUserId = (user_id) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getBookingsByUserId = getBookingsByUserId;
 const updateBookingStatus = (bookingId, status) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data: bookingData, error: bookingError } = yield supabaseClient_1.supabase
+        .from('bookings')
+        .select('driver_id, vehicle_id')
+        .eq('id', bookingId)
+        .single();
+    if (bookingError) {
+        throw new Error(`Error fetching booking data: ${bookingError.message}`);
+    }
     const { data, error } = yield supabaseClient_1.supabase
         .from('bookings')
         .update({ status, updated_at: new Date() })
         .eq('id', bookingId);
     if (error) {
         throw new Error(`Error updating booking status: ${error.message}`);
+    }
+    if (status === 'Arrived' && bookingData) {
+        const { driver_id, vehicle_id } = bookingData;
+        const { error: driverError } = yield supabaseClient_1.supabase
+            .from('drivers')
+            .update({ status: 'available' })
+            .eq('id', driver_id);
+        if (driverError) {
+            throw new Error(`Error updating driver status: ${driverError.message}`);
+        }
+        const { error: vehicleError } = yield supabaseClient_1.supabase
+            .from('vehicles')
+            .update({ status: 'available' })
+            .eq('id', vehicle_id);
+        if (vehicleError) {
+            throw new Error(`Error updating vehicle status: ${vehicleError.message}`);
+        }
     }
     return data;
 });
@@ -184,3 +209,50 @@ const acceptBooking = (bookingId) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.acceptBooking = acceptBooking;
+const updateBookingRate = (bookingId, rating) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(bookingId, rating);
+    const { data: bookingData, error: bookingError } = yield supabaseClient_1.supabase
+        .from('bookings')
+        .select('driver_id')
+        .eq('id', bookingId)
+        .single();
+    if (bookingError) {
+        console.log(bookingError);
+        throw new Error(`Error fetching driver ID: ${bookingError.message}`);
+    }
+    if (!bookingData) {
+        throw new Error('Booking not found');
+    }
+    const driverId = bookingData.driver_id;
+    const { data: driverData, error: driverError } = yield supabaseClient_1.supabase
+        .from('drivers')
+        .select('rating, total_bookings')
+        .eq('id', driverId)
+        .single();
+    if (driverError) {
+        console.log(driverError);
+        throw new Error(`Error fetching driver data: ${driverError.message}`);
+    }
+    if (!driverData) {
+        throw new Error('Driver not found');
+    }
+    const { rating: currentRating, total_bookings } = driverData;
+    const newRating = (currentRating * total_bookings + rating) / (total_bookings + 1);
+    const { error: bookingUpdateError } = yield supabaseClient_1.supabase
+        .from('bookings')
+        .update({ rating })
+        .eq('id', bookingId);
+    if (bookingUpdateError) {
+        console.log(bookingUpdateError);
+        throw new Error(`Error updating booking rate: ${bookingUpdateError.message}`);
+    }
+    const { error: driverUpdateError } = yield supabaseClient_1.supabase
+        .from('drivers')
+        .update({ rating: newRating, total_bookings: total_bookings + 1 })
+        .eq('id', driverId);
+    if (driverUpdateError) {
+        console.log(driverUpdateError);
+        throw new Error(`Error updating driver rating: ${driverUpdateError.message}`);
+    }
+});
+exports.updateBookingRate = updateBookingRate;

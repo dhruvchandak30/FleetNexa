@@ -15,4 +15,6 @@ router.post('/getDriverBookings', bookingController_1.getDriverBookings);
 router.post('/acceptBooking', bookingController_1.acceptBooking);
 //@ts-ignore
 router.post('/updateBookingStatus', bookingController_1.updateBookingStatus);
+//@ts-ignore
+router.post('/rate', bookingController_1.updateBookingRate);
 exports.default = router;

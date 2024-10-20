@@ -27,3 +27,29 @@ export const createDriver = async (
         res.status(400).json({ error: 'Error creating driver' });
     }
 };
+
+export const deleteDriver = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        await driverService.deleteDriver(Number(req.params.id));
+        res.status(200).json({ message: 'Driver deleted' });
+    } catch (error) {
+        res.status(400).json({ error: 'Error deleting driver' });
+    }
+};
+
+export const updateDriverStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        await driverService.updateDriverStatus(Number(req.params.id), req.body.status);
+        res.status(200).json({ message: 'Driver status updated' });
+    } catch (error) {
+        res.status(400).json({ error: 'Error updating driver status' });
+    }
+}
