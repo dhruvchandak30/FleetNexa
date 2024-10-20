@@ -18,6 +18,9 @@ Fleet Nexa is an on-demand logistics platform designed to efficiently connect us
 - **Kafka**: Manages communication between services using an event-driven approach.
 - **Sharding and Scaling**: PostgreSQL sharding by user email ensures high performance and scalability.
 
+![image](https://github.com/user-attachments/assets/1aef09f9-eea0-4c53-89ff-29b5e8a24d98)
+
+
 ## Tech Stack
 
 - **Next.js**: Frontend framework for server-side rendering.
@@ -27,6 +30,10 @@ Fleet Nexa is an on-demand logistics platform designed to efficiently connect us
 - **Redis**: Used for caching and live location tracking.
 - **Kafka**: Event-driven messaging between services.
 - **Supabase**: Simplifies database operations and user authentication.
+
+![image](https://github.com/user-attachments/assets/2e949eb1-ce23-40f1-82c4-c8a57ebd3f24)
+
+
 
 ## How to Start the Project
 
