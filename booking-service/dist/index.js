@@ -16,6 +16,9 @@ app.use(express_1.default.json());
 app.use('/api/bookings', bookingRoutes_1.default);
 app.use('/api/signup', signupRoutes_1.default);
 app.use('/api/login', loginRoutes_1.default);
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

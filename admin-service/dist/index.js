@@ -17,6 +17,10 @@ app.use(express_1.default.json());
 app.use('/api/bookings', bookingRoutes_1.default);
 app.use('/api/drivers', driverRoutes_1.default);
 app.use('/api/vehicles', vehicleRoutes_1.default);
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
 app.listen(PORT, () => {
     // main();
     console.log(`Server is running on http://localhost:${PORT}`);

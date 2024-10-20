@@ -51,6 +51,10 @@ const calculateDistance = (loc1: Location, loc2: Location): number => {
     return R * c;
 };
 
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
 app.listen(PORT, () => {
     console.log(`Pricing service is running on http://localhost:${PORT}`);
 });

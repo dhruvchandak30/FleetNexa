@@ -34,6 +34,9 @@ const calculateDistance = (loc1, loc2) => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 };
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
 app.listen(PORT, () => {
     console.log(`Pricing service is running on http://localhost:${PORT}`);
 });
