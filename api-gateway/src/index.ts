@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
-import { main } from './queue/producer';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import httpProxy from 'http-proxy';
+import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 
 dotenv.config();
 
@@ -13,7 +12,7 @@ app.use(express.json());
 
 const services = {
     admin: 'https://admin-service-olive.vercel.app',
-    booking: 'https://booking-service-eight.vercel.app',
+    booking: 'http://localhost:5000',
     pricing: 'https://pricing-service-seven.vercel.app',
 };
 
@@ -46,41 +45,68 @@ const checkServicesHealth = async () => {
 
 setInterval(checkServicesHealth, 30000);
 
-// Proxy setup
-const proxy = httpProxy.createProxyServer();
+const healthCheckMiddleware = (serviceName: keyof typeof services) => {
+    return (req: Request, res: Response, next: () => void) => {
+        if (serviceStatusCache[serviceName] === 'healthy') {
+            next();
+        } else {
+            res.status(503).send({
+                error: `${serviceName} service is currently unavailable.`,
+            });
+        }
+    };
+};
 
-app.use('/admin', (req: Request, res: Response) => {
-    console.log('Admin service request');
-    if (serviceStatusCache['admin'] === 'healthy') {
-        proxy.web(req, res, { target: services.admin });
-    } else {
-        res.status(503).send({
-            error: 'Admin service is currently unavailable.',
-        });
-    }
-});
+app.use(
+    '/admin',
+    healthCheckMiddleware('admin'),
+    createProxyMiddleware({
+        target: services.admin,
+        changeOrigin: true,
+    })
+);
 
-app.use('/booking', (req: Request, res: Response) => {
-    console.log('Booking request');
-    if (serviceStatusCache['booking'] === 'healthy') {
-        proxy.web(req, res, { target: services.booking });
-    } else {
-        res.status(503).send({
-            error: 'Booking service is currently unavailable.',
-        });
-    }
-});
 
-app.use('/pricing', (req: Request, res: Response) => {
-    console.log('Pricing request');
-    if (serviceStatusCache['pricing'] === 'healthy') {
-        proxy.web(req, res, { target: services.pricing });
-    } else {
-        res.status(503).send({
-            error: 'Pricing service is currently unavailable.',
-        });
-    }
-});
+app.use(
+    '/booking',
+    (req: Request, res: Response, next: () => void) => {
+        console.log('Received request at /booking:', req.method, req.body);
+        healthCheckMiddleware('booking')(req, res, next);
+    },
+    createProxyMiddleware({
+        target: services.booking,
+        changeOrigin: true,
+        pathRewrite: { '^/booking': '' },
+        onProxyReq: (proxyReq: any, req: any) => {
+            console.log('Forwarding request to:', `${services.booking}${req.originalUrl.replace('/booking', '')}`);
+
+            // Only log if method is POST, PUT, or PATCH
+            if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+                const bodyData = JSON.stringify(req.body);
+                proxyReq.setHeader('Content-Type', 'application/json');
+                proxyReq.write(bodyData);
+                console.log('Booking service request body:', bodyData);
+            } else {
+                console.log('Request method not supported for body logging:', req.method);
+            }
+        },
+        onError: (err: any, req: Request, res: Response) => {
+            console.error('Proxy error:', err);
+            res.status(502).send({ error: 'Bad Gateway: Unable to reach the booking service.' });
+        },
+    } as any)
+);
+
+
+
+app.use(
+    '/pricing',
+    healthCheckMiddleware('pricing'),
+    createProxyMiddleware({
+        target: services.pricing,
+        changeOrigin: true,
+    })
+);
 
 app.listen(PORT, () => {
     console.log(`API Gateway is running on http://localhost:${PORT}`);
