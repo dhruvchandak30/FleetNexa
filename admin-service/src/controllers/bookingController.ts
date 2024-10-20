@@ -23,7 +23,8 @@ export const getAllBookings = async (
         const bookings = await bookingService.getAllBookings();
         res.status(200).json(bookings);
     } catch (error) {
-        res.status(400).json({ error: 'Error fetching bookings' });
+        console.log(error);
+        res.status(400).json({ error: 'Error fetching bookings' + error });
     }
 };
 

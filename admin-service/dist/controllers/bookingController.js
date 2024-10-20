@@ -50,7 +50,8 @@ const getAllBookings = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         res.status(200).json(bookings);
     }
     catch (error) {
-        res.status(400).json({ error: 'Error fetching bookings' });
+        console.log(error);
+        res.status(400).json({ error: 'Error fetching bookings' + error });
     }
 });
 exports.getAllBookings = getAllBookings;
