@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = main;
+exports.main = void 0;
 const kafkajs_1 = require("kafkajs");
 const kafka = new kafkajs_1.Kafka({
     clientId: 'ADMIN-SERVICE',
@@ -25,12 +25,12 @@ function main() {
                 fromBeginning: true,
             });
             yield consumer.run({
-                eachMessage: (_a) => __awaiter(this, [_a], void 0, function* ({ topic, partition, message }) {
-                    var _b;
+                eachMessage: ({ topic, partition, message }) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
                     console.log({
                         partition,
                         offset: message.offset,
-                        value: (_b = message === null || message === void 0 ? void 0 : message.value) === null || _b === void 0 ? void 0 : _b.toString(),
+                        value: (_a = message === null || message === void 0 ? void 0 : message.value) === null || _a === void 0 ? void 0 : _a.toString(),
                     });
                 }),
             });
@@ -40,3 +40,4 @@ function main() {
         }
     });
 }
+exports.main = main;

@@ -87,7 +87,7 @@ export const createBookingWithDriverAndVehicle = async (
 
     const { error: vehicleUpdateError } = await supabase
         .from('vehicles')
-        .update({ status: 'unavailable' })
+        .update({ status: 'active' })
         .eq('id', vehicle.id);
 
     if (vehicleUpdateError) {

@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createVehicle = exports.getAllVehicles = void 0;
+exports.updateVehicleStatus = exports.createVehicle = exports.getAllVehicles = void 0;
 const vehicleService = __importStar(require("../services/vehicleService"));
 const getAllVehicles = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -54,3 +54,13 @@ const createVehicle = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.createVehicle = createVehicle;
+const updateVehicleStatus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield vehicleService.updateVehicleStatus(parseInt(req.params.id), req.body.status);
+        res.status(200).json({ message: 'Vehicle status updated' });
+    }
+    catch (error) {
+        res.status(400).json({ error: 'Error updating vehicle status' });
+    }
+});
+exports.updateVehicleStatus = updateVehicleStatus;

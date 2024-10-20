@@ -9,16 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllVehicles = exports.createVehicle = void 0;
+exports.updateVehicleStatus = exports.getAllVehicles = exports.createVehicle = void 0;
 const config_1 = require("../config");
 const createVehicle = (vehicleData) => __awaiter(void 0, void 0, void 0, function* () {
-    const { data, error } = yield config_1.supabase
-        .from('vehicles')
-        .insert([{
+    const { data, error } = yield config_1.supabase.from('vehicles').insert([
+        {
             type: vehicleData.type,
             license_plate: vehicleData.license_plate,
             capacity: vehicleData.capacity,
-        }]);
+        },
+    ]);
     if (error) {
         console.log(error);
         throw new Error(error.message);
@@ -27,11 +27,19 @@ const createVehicle = (vehicleData) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createVehicle = createVehicle;
 const getAllVehicles = () => __awaiter(void 0, void 0, void 0, function* () {
-    const { data, error } = yield config_1.supabase
-        .from('vehicles')
-        .select('*');
+    const { data, error } = yield config_1.supabase.from('vehicles').select('*');
     if (error)
         throw new Error(error.message);
     return data;
 });
 exports.getAllVehicles = getAllVehicles;
+const updateVehicleStatus = (vehicleId, status) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data, error } = yield config_1.supabase
+        .from('vehicles')
+        .update({ status })
+        .eq('id', vehicleId);
+    if (error)
+        throw new Error(error.message);
+    return data;
+});
+exports.updateVehicleStatus = updateVehicleStatus;

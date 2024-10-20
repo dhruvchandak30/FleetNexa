@@ -26,3 +26,19 @@ export const createVehicle = async (
         res.status(400).json({ error: 'Error creating vehicle' });
     }
 };
+
+export const updateVehicleStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        await vehicleService.updateVehicleStatus(
+            parseInt(req.params.id),
+            req.body.status
+        );
+        res.status(200).json({ message: 'Vehicle status updated' });
+    } catch (error) {
+        res.status(400).json({ error: 'Error updating vehicle status' });
+    }
+};
