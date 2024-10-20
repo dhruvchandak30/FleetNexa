@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useUserContext } from '@/context/UserContext';
+import Image from 'next/image';
+import logo from '@/assets/logo.png';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -40,8 +42,14 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <div className="flex items-center">
-                        <Link href="/">
-                            <span className="text-2xl font-bold text-brown-700">
+                        <Link href="/" className="flex flex-row">
+                            <Image
+                                alt="logo"
+                                src={logo}
+                                width={50}
+                                height={35}
+                            />
+                            <span className="text-3xl font-bold text-brown-700  flex my-auto">
                                 Fleet Nexa
                             </span>
                         </Link>
@@ -94,15 +102,15 @@ const Navbar = () => {
                                         </Link>
                                     </>
                                 )}
-                                {user.type === 'driver' && <div>
-                                    <Link href="/mybookings">
+                                {user.type === 'driver' && (
+                                    <div>
+                                        <Link href="/mybookings">
                                             <button className="bg-[#A9592C] text-white py-2 px-4 rounded hover:text-gray-200">
                                                 Bookings
                                             </button>
                                         </Link>
-                                 
-                                    
-                                    </div>}
+                                    </div>
+                                )}
                                 {user.type === 'user' && (
                                     <>
                                         <Link href="/book">

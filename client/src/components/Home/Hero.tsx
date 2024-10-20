@@ -7,45 +7,6 @@ import Boy from '@/assets/delivery-boy.png';
 const Hero = () => {
     return (
         <>
-            <Head>
-                <title>
-                    On-Demand Logistics Platform | Fast and Easy Goods
-                    Transportation
-                </title>
-                <meta
-                    name="description"
-                    content="We provide fast and easy transportation services for moving your goods. Book now and track your deliveries in real-time."
-                />
-                <meta
-                    name="keywords"
-                    content="logistics, goods transportation, delivery services, track deliveries, book transport, fast delivery"
-                />
-                <meta name="author" content="FleetNexa" />
-
-                <meta
-                    property="og:title"
-                    content="On-Demand Logistics Platform | Fast and Easy Goods Transportation"
-                />
-                <meta
-                    property="og:description"
-                    content="We offer reliable and real-time transportation services. Track your goods with ease and get upfront price estimations."
-                />
-                <meta property="og:image" content={Boy.src} />
-                <meta property="og:url" content="https://fleetnexa.com/" />
-                <meta property="og:type" content="website" />
-
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta
-                    name="twitter:title"
-                    content="On-Demand Logistics Platform | Fast and Easy Goods Transportation"
-                />
-                <meta
-                    name="twitter:description"
-                    content="Book your transport service and track your goods in real-time with our easy-to-use platform."
-                />
-                <meta name="twitter:image" content={Boy.src} />
-            </Head>
-
             <section className="bg-gradient-to-r from-[#d2eae5] to-[#ead9ce] lg:h-screen h-full flex lg:pt-0 pt-24 items-center">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 lg:px-8">
                     <div className="text-center md:text-left lg:w-1/2 w-full">
