@@ -2,23 +2,21 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <div id='contact' className="bg-[#A9592C] text-white py-10 px-6">
-      <div className="container max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {/* Company Info */}
-        <div>
+    <div id="contact" className="bg-[#A9592C] text-white py-10 px-6">
+      <div className="container max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center sm:text-left">
+        <div className="flex flex-col items-center sm:items-start">
           <h2 className="text-2xl font-bold">Fleet Nexa</h2>
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-sm text-justify">
             When you’re moving from your old house to a new location, there are thousands of things to be taken care of. We’ll be your assistants, helping you move all your belongings fast wherever you wish.
           </p>
-          <div className="flex space-x-4 mt-4 text-sm">
+          <div className="flex space-x-4 mt-4 text-sm justify-center sm:justify-start">
             <a href="#" className="hover:underline">Instagram</a>
             <a href="#" className="hover:underline">Twitter</a>
             <a href="#" className="hover:underline">Facebook</a>
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
+        <div className="flex flex-col items-center sm:items-start">
           <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li><a href="#" className="hover:underline">Home</a></li>
@@ -28,8 +26,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Services */}
-        <div>
+        <div className="flex flex-col items-center sm:items-start">
           <h3 className="text-lg font-semibold mb-4">Services</h3>
           <ul className="space-y-2 text-sm">
             <li><a href="#" className="hover:underline">Trucking & Haulage</a></li>
@@ -39,8 +36,7 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Contact Us */}
-        <div>
+        <div className="flex flex-col items-center sm:items-start">
           <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
           <p className="text-sm">Location: Liberation Road, CA</p>
           <p className="text-sm">Phone: +1-234-5675-57</p>
