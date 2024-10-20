@@ -38,7 +38,7 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
     }
     console.log('Vehicle Data', vehicleData);
     const vehicle = vehicleData[0];
-    const pricingServiceUrl = 'http://localhost:5002/calculate-cost';
+    const pricingServiceUrl = 'https://pricing-service-seven.vercel.app/calculate-cost';
     const pricingResponse = yield fetch(pricingServiceUrl, {
         method: 'POST',
         headers: {

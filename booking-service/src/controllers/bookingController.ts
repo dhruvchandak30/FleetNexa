@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import * as bookingService from '../services/bookingService';
 
-export const createBooking = async (req: Request, res: Response): Promise<Response> => {
+export const 
+createBooking = async (req: Request, res: Response): Promise<Response> => {
     try {
         const bookingData = await bookingService.createBookingWithDriverAndVehicle(req.body);
         return res.status(201).json({ message: 'Booking created', data: bookingData });

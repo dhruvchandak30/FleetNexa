@@ -42,7 +42,7 @@ export const createBookingWithDriverAndVehicle = async (
     console.log('Vehicle Data', vehicleData);
     const vehicle = vehicleData[0];
 
-    const pricingServiceUrl = 'http://localhost:5002/calculate-cost';
+    const pricingServiceUrl = 'https://pricing-service-seven.vercel.app/calculate-cost';
     const pricingResponse = await fetch(pricingServiceUrl, {
         method: 'POST',
         headers: {
