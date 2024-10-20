@@ -132,8 +132,7 @@ const getBookingsByUserId = (user_id) => __awaiter(void 0, void 0, void 0, funct
     const { data, error } = yield supabaseClient_1.supabase
         .from('bookings')
         .select('*')
-        .eq('user_id', user_id)
-        .eq('status', 'pending');
+        .eq('user_id', user_id);
     if (error) {
         throw new Error(`Error fetching bookings: ${error.message}`);
     }

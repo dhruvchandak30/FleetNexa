@@ -157,7 +157,6 @@ export const getBookingsByUserId = async (user_id: number) => {
         .from('bookings')
         .select('*')
         .eq('user_id', user_id)
-        .eq('status', 'pending');
 
     if (error) {
         throw new Error(`Error fetching bookings: ${error.message}`);
