@@ -39,7 +39,7 @@ const Drivers = () => {
     const fetchDrivers = async () => {
         try {
             const response = await axios.get(
-                'https://admin-service-olive.vercel.app/api/drivers'
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/drivers`
             );
             setDrivers(response.data);
             setError('');
@@ -77,7 +77,7 @@ const Drivers = () => {
                     status,
                 };
             await axios.post(
-                'https://admin-service-olive.vercel.app/api/drivers',
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/drivers`,
                 driverData
             );
             fetchDrivers();
@@ -94,7 +94,7 @@ const Drivers = () => {
     const deleteDriver = async (id: number) => {
         try {
             await axios.delete(
-                `https://admin-service-olive.vercel.app/api/drivers/${id}`
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/drivers/${id}`
             );
             fetchDrivers();
             setError('');
@@ -110,9 +110,12 @@ const Drivers = () => {
         const newStatus =
             currentStatus === 'available' ? 'unavailable' : 'available';
         try {
-            await axios.patch(`https://admin-service-olive.vercel.app/api/drivers/${id}`, {
-                status: newStatus,
-            });
+            await axios.patch(
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/drivers/${id}`,
+                {
+                    status: newStatus,
+                }
+            );
             fetchDrivers();
         } catch (err) {
             setError('Failed to update driver status. Please try again later.');

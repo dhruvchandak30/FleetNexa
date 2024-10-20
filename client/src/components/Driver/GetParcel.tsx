@@ -42,7 +42,7 @@ const GetParcel = ({ id }: GetParcelProps) => {
     } | null>(null);
     const [showDropoff, setShowDropoff] = useState(false);
     const [parcelCollected, setParcelCollected] = useState(false);
-    const [parcelDelivered, setParcelDelivered] = useState(false); // New state for delivery status
+    const [parcelDelivered, setParcelDelivered] = useState(false);
 
     useEffect(() => {
         if (id) {

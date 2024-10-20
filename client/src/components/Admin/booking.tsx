@@ -35,7 +35,7 @@ const Bookings = () => {
     const fetchBookings = async () => {
         try {
             const response = await axios.get(
-                'https://admin-service-olive.vercel.app/api/bookings'
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/bookings`
             );
             setBookings(response.data);
             setError('');
@@ -47,24 +47,24 @@ const Bookings = () => {
     const fetchDriver = async (id: number) => {
         try {
             const response = await axios.get(
-                `https://admin-service-olive.vercel.app/api/drivers/${id}`
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/drivers/${id}`
             );
             return response.data;
         } catch (err) {
             return null;
         }
-    }
+    };
 
     const fetchVehicle = async (id: number) => {
         try {
             const response = await axios.get(
-                `https://admin-service-olive.vercel.app/api/vehicles/${id}`
+                `${process.env.NEXT_PUBLIC_ADMIN_SERVICE_URL}/api/vehicles/${id}`
             );
             return response.data;
         } catch (err) {
             return null;
         }
-    }
+    };
 
     useEffect(() => {
         fetchBookings();
