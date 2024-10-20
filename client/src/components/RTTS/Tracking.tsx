@@ -115,82 +115,98 @@ const TrackingPage = () => {
             ) : (
                 <ul className="w-full max-w-4xl mb-6 space-y-6">
                     {bookings.length > 0 &&
-                        bookings.map((booking) => (
-                            <li
-                                key={booking.id}
-                                className="p-5 border-2 border-[#A9592C] rounded-xl shadow-lg cursor-pointer hover:bg-opacity-10 transition-all hover:shadow-xl"
-                                onClick={() => handleBookingClick(booking)}
-                            >
-                                <p
-                                    className={`text-gray-800 ${
-                                        booking.status === 'pending'
-                                            ? 'text-red-600'
-                                            : booking.status === 'On the way'
-                                            ? 'text-yellow-600'
-                                            : booking.status === 'Arrived' ||
-                                              booking.status === 'In transit'
-                                            ? 'text-green-600'
-                                            : ''
-                                    }`}
+                        bookings
+                            .slice()
+                            .sort((a, b) => b.estimated_cost - a.estimated_cost)
+                            .map((booking) => (
+                                <li
+                                    key={booking.id}
+                                    className="p-5 border-2 border-[#A9592C] rounded-xl shadow-lg cursor-pointer hover:bg-opacity-10 transition-all hover:shadow-xl"
+                                    onClick={() => handleBookingClick(booking)}
                                 >
-                                    <strong>Status:</strong>{' '}
-                                    {booking.status.charAt(0).toUpperCase() +
-                                        booking.status.slice(1)}
-                                </p>
+                                    <p
+                                        className={`text-gray-800 ${
+                                            booking.status === 'pending'
+                                                ? 'text-red-600'
+                                                : booking.status ===
+                                                  'On the way'
+                                                ? 'text-yellow-600'
+                                                : booking.status ===
+                                                      'Arrived' ||
+                                                  booking.status ===
+                                                      'In transit'
+                                                ? 'text-green-600'
+                                                : ''
+                                        }`}
+                                    >
+                                        <strong>Status:</strong>{' '}
+                                        {booking.status
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                            booking.status.slice(1)}
+                                    </p>
 
-                                <p className="text-gray-800">
-                                    <strong>Estimated Cost:</strong> $
-                                    {booking.estimated_cost}
-                                </p>
-                                <p className="text-gray-800">
-                                    <strong>Pickup:</strong>{' '}
-                                    {booking.pickup_location.formatted}
-                                </p>
-                                <p className="text-gray-800">
-                                    <strong>Drop-off:</strong>{' '}
-                                    {booking.dropoff_location.formatted}
-                                </p>
+                                    <p className="text-gray-800">
+                                        <strong>Estimated Cost:</strong> $
+                                        {booking.estimated_cost}
+                                    </p>
+                                    <p className="text-gray-800">
+                                        <strong>Pickup:</strong>{' '}
+                                        {booking.pickup_location.formatted}
+                                    </p>
+                                    <p className="text-gray-800">
+                                        <strong>Drop-off:</strong>{' '}
+                                        {booking.dropoff_location.formatted}
+                                    </p>
 
-                                {booking.status === 'Arrived' && (
-                                    <div className="mt-4">
-                                        <p className="text-gray-800">
-                                            <strong>Rate the Driver:</strong>
-                                        </p>
-                                        <div className="flex space-x-2">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <button
-                                                    key={star}
-                                                    className={`text-2xl cursor-pointer ${
-                                                        star <=
-                                                        (rating[booking.id] ||
-                                                            0)
-                                                            ? 'text-yellow-400'
-                                                            : 'text-gray-300'
-                                                    }`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setRating((prev) => ({
-                                                            ...prev,
-                                                            [booking.id]: star,
-                                                        }));
-                                                    }}
-                                                >
-                                                    ★
-                                                </button>
-                                            ))}
+                                    {booking.status === 'Arrived' && (
+                                        <div className="mt-4">
+                                            <p className="text-gray-800">
+                                                <strong>
+                                                    Rate the Driver:
+                                                </strong>
+                                            </p>
+                                            <div className="flex space-x-2">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        className={`text-2xl cursor-pointer ${
+                                                            star <=
+                                                            (rating[
+                                                                booking.id
+                                                            ] || 0)
+                                                                ? 'text-yellow-400'
+                                                                : 'text-gray-300'
+                                                        }`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setRating(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    [booking.id]:
+                                                                        star,
+                                                                })
+                                                            );
+                                                        }}
+                                                    >
+                                                        ★
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                className="mt-2 bg-[#A9592C] text-white px-4 py-2 rounded"
+                                                onClick={() =>
+                                                    handleRatingSubmit(
+                                                        booking.id
+                                                    )
+                                                }
+                                            >
+                                                Submit Rating
+                                            </button>
                                         </div>
-                                        <button
-                                            className="mt-2 bg-[#A9592C] text-white px-4 py-2 rounded"
-                                            onClick={() =>
-                                                handleRatingSubmit(booking.id)
-                                            }
-                                        >
-                                            Submit Rating
-                                        </button>
-                                    </div>
-                                )}
-                            </li>
-                        ))}
+                                    )}
+                                </li>
+                            ))}
                 </ul>
             )}
 

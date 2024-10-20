@@ -120,7 +120,7 @@ const MyBookings = () => {
                                     {booking.pickup_location.formatted}
                                 </p>
                             </div>
-                            {booking.status === 'pending' && (
+                            {booking.status !== 'pending' && (
                                 <div className="mb-2">
                                     <p className="text-sm text-gray-500 font-semibold">
                                         Dropoff Location
