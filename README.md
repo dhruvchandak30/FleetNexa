@@ -41,7 +41,7 @@ Fleet Nexa uses Docker for containerization of its services. To get started, fol
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/fleetnexa.git
+   git clone https://github.com/dhruvchandak30/fleetnexa.git
    cd fleetnexa
    ```
 
@@ -85,8 +85,4 @@ The system is designed to scale using:
 - **Database sharding**: Distributes data across PostgreSQL shards.
 - **Redis caching**: For frequently accessed data like live locations.
 
-For detailed monitoring, consider using **Prometheus** and set up necessary **alerts** to handle traffic surges and failures.
 
----
-
-This README provides a concise overview of the project and steps to get started. For more detailed information, refer to individual service documentation or the project wiki.
