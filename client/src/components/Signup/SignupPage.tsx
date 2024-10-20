@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 const SignupPage = () => {
     const { setUser } = useUserContext();
-    const [userType, setUserType] = useState<'user' | 'admin'>('user');
+    const [userType, setUserType] = useState<'user'>('user');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -72,9 +72,7 @@ const SignupPage = () => {
                     </label>
                     <select
                         value={userType}
-                        onChange={(e) =>
-                            setUserType(e.target.value as 'user' | 'admin')
-                        }
+                        onChange={(e) => setUserType(e.target.value as 'user')}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     >
                         <option value="user">User</option>
