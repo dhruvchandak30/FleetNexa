@@ -17,9 +17,10 @@ const Hero = () => {
                             </span>
                         </h1>
                         <p className="text-lg text-black font-semibold mb-6">
-                            Facilisis gravida neque convallis a cras semper
-                            auctor neque vitae. Massa ultricies mi quis
-                            hendrerit dolor magna. Vulputate eu scelerisque.
+                            Fleet Nexa is a scalable, on-demand logistics
+                            platform built for efficient goods transportation.
+                            It connects users and drivers seamlessly, ensuring
+                            reliable and fast deliveries.
                         </p>
                         <Link href="/book">
                             <button className="bg-[#A9592C] text-white py-3 px-6 rounded-lg hover:bg-opacity-90">
