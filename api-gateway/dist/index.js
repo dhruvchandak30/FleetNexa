@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express_1.default.json());
 const services = {
     admin: 'https://admin-service-olive.vercel.app//health',
-    booking: 'http://localhost:5000/health',
+    booking: 'https://booking-service-eight.vercel.app/health',
     pricing: 'http://localhost:5002/health',
 };
 const serviceStatusCache = {};

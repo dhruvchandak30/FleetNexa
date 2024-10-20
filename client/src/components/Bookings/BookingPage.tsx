@@ -97,7 +97,7 @@ const BookingPage = () => {
                 console.log(bookingData);
 
                 const response = await fetch(
-                    'http://localhost:5000/api/bookings',
+                    `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings`,
                     {
                         method: 'POST',
                         headers: {

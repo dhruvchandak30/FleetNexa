@@ -56,7 +56,7 @@ const TrackingParcel = ({ id }: TrackingParcelProps) => {
             const fetchBookingDetails = async () => {
                 try {
                     const response = await fetch(
-                        'http://localhost:5000/api/bookings/getBookingDetails',
+                        `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings/getBookingDetails`,
                         {
                             method: 'POST',
                             headers: {

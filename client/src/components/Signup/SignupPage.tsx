@@ -32,13 +32,16 @@ const SignupPage = () => {
                 requestBody.phone_number = phone;
             }
 
-            const response = await fetch('http://localhost:5000/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
-            });
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/signup`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                }
+            );
 
             const data = await response.json();
 

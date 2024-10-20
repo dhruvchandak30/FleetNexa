@@ -23,7 +23,7 @@ const MyBookings = () => {
         const fetchDriverBookings = async () => {
             try {
                 const response = await fetch(
-                    'http://localhost:5000/api/bookings/getDriverBookings',
+                    `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings/getDriverBookings`,
                     {
                         method: 'POST',
                         headers: {

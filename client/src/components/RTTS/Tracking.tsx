@@ -27,7 +27,7 @@ const TrackingPage = () => {
         const fetchBookings = async () => {
             try {
                 const response = await fetch(
-                    'http://localhost:5000/api/bookings/getbookings',
+                    `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings/getbookings`,
                     {
                         method: 'POST',
                         headers: {
