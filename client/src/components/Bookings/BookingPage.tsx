@@ -276,7 +276,7 @@ const BookingPage = () => {
                             </p>
                         </div>
                         <p className="text-lg text-gray-800">
-                            <span className="font-bold">Estimated Cost:</span> $
+                            <span className="font-bold">Estimated Cost:</span> ₹
                             {estimatedCost.toFixed(2)}
                         </p>
                         <p className="text-lg text-gray-800">
