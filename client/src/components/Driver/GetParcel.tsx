@@ -103,7 +103,7 @@ const GetParcel = ({ id }: GetParcelProps) => {
                     L.latLng(dropoffLocation.lat, dropoffLocation.lng)
                 );
             }
-
+            //@ts-ignore
             L.Routing.control({
                 waypoints,
                 routeWhileDragging: true,

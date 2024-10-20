@@ -43,7 +43,9 @@ interface TrackingParcelProps {
 }
 
 const TrackingParcel = ({ id }: TrackingParcelProps) => {
-    const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
+    const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(
+        null
+    );
     const [driverLocation, setDriverLocation] = useState({
         lat: 21.1339435,
         lng: 79.0805662,
@@ -90,7 +92,7 @@ const TrackingParcel = ({ id }: TrackingParcelProps) => {
             L.tileLayer(
                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             ).addTo(map);
-
+            //@ts-ignore
             const routingControl = L.Routing.control({
                 waypoints: [
                     L.latLng(pickupLocation.lat, pickupLocation.lng),
@@ -128,34 +130,49 @@ const TrackingParcel = ({ id }: TrackingParcelProps) => {
         <div className="p-6 pt-12 my-12 bg-gradient-to-br from-[#d2eae5] to-[#ead9ce] rounded-lg shadow-md">
             <div className="flex flex-col md:flex-row justify-between mb-6 border p-4 rounded-md shadow-lg bg-white">
                 <div className="md:w-1/3 mb-4 md:mb-0">
-                    <h3 className="text-lg font-semibold text-[#A9592C]">Driver Details</h3>
+                    <h3 className="text-lg font-semibold text-[#A9592C]">
+                        Driver Details
+                    </h3>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Name:</span> {bookingDetails.driver.name}
+                        <span className="font-semibold">Name:</span>{' '}
+                        {bookingDetails.driver.name}
                     </p>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Phone:</span> {bookingDetails.driver.phone_number}
+                        <span className="font-semibold">Phone:</span>{' '}
+                        {bookingDetails.driver.phone_number}
                     </p>
                 </div>
                 <div className="md:w-1/3 mb-4 md:mb-0">
-                    <h3 className="text-lg font-semibold text-[#A9592C]">Vehicle Details</h3>
+                    <h3 className="text-lg font-semibold text-[#A9592C]">
+                        Vehicle Details
+                    </h3>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Model:</span> {bookingDetails.vehicle.type}
+                        <span className="font-semibold">Model:</span>{' '}
+                        {bookingDetails.vehicle.type}
                     </p>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Number Plate:</span> {bookingDetails.vehicle.license_plate}
+                        <span className="font-semibold">Number Plate:</span>{' '}
+                        {bookingDetails.vehicle.license_plate}
                     </p>
                 </div>
                 <div className="md:w-1/3">
-                    <h3 className="text-lg font-semibold text-[#A9592C]">Journey Details</h3>
+                    <h3 className="text-lg font-semibold text-[#A9592C]">
+                        Journey Details
+                    </h3>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Starting Point:</span> {pickupLocation.formatted}
+                        <span className="font-semibold">Starting Point:</span>{' '}
+                        {pickupLocation.formatted}
                     </p>
                     <p className="text-gray-700">
-                        <span className="font-semibold">Ending Point:</span> {dropoffLocation.formatted}
+                        <span className="font-semibold">Ending Point:</span>{' '}
+                        {dropoffLocation.formatted}
                     </p>
                 </div>
             </div>
-            <div className="h-96 mt-6 rounded-lg overflow-hidden shadow-sm" id="map"></div>
+            <div
+                className="h-96 mt-6 rounded-lg overflow-hidden shadow-sm"
+                id="map"
+            ></div>
         </div>
     );
 };
