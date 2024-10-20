@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = main;
+exports.main = void 0;
 const kafkajs_1 = require("kafkajs");
 const kafka = new kafkajs_1.Kafka({
     clientId: "API-GATEWAY",
@@ -38,3 +38,4 @@ function main() {
         }
     });
 }
+exports.main = main;

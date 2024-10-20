@@ -42,7 +42,7 @@ const Drivers = () => {
     const fetchDrivers = async () => {
         try {
             const response = await axios.get(
-                'http://localhost:5001/api/drivers'
+                'https://admin-service-olive.vercel.app/api/drivers'
             );
             setDrivers(response.data);
             setError('');
@@ -79,7 +79,7 @@ const Drivers = () => {
                     phone_number: phoneNumber,
                     status,
                 };
-            await axios.post('http://localhost:5001/api/drivers', driverData);
+            await axios.post('https://admin-service-olive.vercel.app/api/drivers', driverData);
             fetchDrivers();
             resetForm();
             setError('');
@@ -93,7 +93,7 @@ const Drivers = () => {
 
     const deleteDriver = async (id: number) => {
         try {
-            await axios.delete(`http://localhost:5001/api/drivers/${id}`);
+            await axios.delete(`https://admin-service-olive.vercel.app/api/drivers/${id}`);
             fetchDrivers();
             setError('');
         } catch (err) {

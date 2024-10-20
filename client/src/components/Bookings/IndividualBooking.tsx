@@ -30,7 +30,7 @@ const BookingDetails = ({ id }: { id: string }) => {
     const fetchBookingDetails = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:5001/api/bookings/${id}`
+                `https://admin-service-olive.vercel.app/api/bookings/${id}`
             );
             setBooking(response.data);
             setError('');

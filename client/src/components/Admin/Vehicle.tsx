@@ -21,7 +21,7 @@ const AddVehicle: React.FC = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:5001/api/vehicles',
+                'https://admin-service-olive.vercel.app/api/vehicles',
                 {
                     type,
                     license_plate: licensePlate,
@@ -44,7 +44,7 @@ const AddVehicle: React.FC = () => {
     const fetchVehicles = async () => {
         try {
             const response = await axios.get(
-                'http://localhost:5001/api/vehicles'
+                'https://admin-service-olive.vercel.app/api/vehicles'
             );
             setVehicles(response.data);
         } catch (error) {

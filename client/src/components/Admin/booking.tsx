@@ -24,7 +24,7 @@ const Bookings = () => {
     const fetchBookings = async () => {
         try {
             const response = await axios.get(
-                'http://localhost:5001/api/bookings'
+                'https://admin-service-olive.vercel.app/api/bookings'
             );
             setBookings(response.data);
             setError('');
@@ -35,7 +35,7 @@ const Bookings = () => {
 
     const handleStatusUpdate = async (id: number, status: string) => {
         try {
-            await axios.patch(`http://localhost:5001/api/bookings/status`, {
+            await axios.patch(`https://admin-service-olive.vercel.app/api/bookings/status`, {
                 id,
                 status,
             });
