@@ -54,7 +54,7 @@ const MyBookings = () => {
     const handleAcceptBooking = async (bookingId: string) => {
         try {
             const response = await fetch(
-                `http://localhost:5000/api/bookings/acceptBooking`,
+                `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/bookings/acceptBooking`,
                 {
                     method: 'POST',
                     headers: {
@@ -120,14 +120,16 @@ const MyBookings = () => {
                                     {booking.pickup_location.formatted}
                                 </p>
                             </div>
-                            <div className="mb-2">
-                                <p className="text-sm text-gray-500 font-semibold">
-                                    Dropoff Location
-                                </p>
-                                <p className="text-lg text-gray-800">
-                                    {booking.dropoff_location.formatted}
-                                </p>
-                            </div>
+                            {booking.status === 'pending' && (
+                                <div className="mb-2">
+                                    <p className="text-sm text-gray-500 font-semibold">
+                                        Dropoff Location
+                                    </p>
+                                    <p className="text-lg text-gray-800">
+                                        {booking.dropoff_location.formatted}
+                                    </p>
+                                </div>
+                            )}
                             <div className="mb-2">
                                 <p className="text-sm text-gray-500 font-semibold">
                                     Estimated Cost
