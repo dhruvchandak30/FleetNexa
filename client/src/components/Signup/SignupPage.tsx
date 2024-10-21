@@ -33,7 +33,8 @@ const SignupPage = () => {
             }
 
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/signup`,
+                // `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/signup`,
+                `http://localhost:5000/api/signup`,
                 {
                     method: 'POST',
                     headers: {
@@ -44,9 +45,10 @@ const SignupPage = () => {
             );
 
             const data = await response.json();
+            console.log('Sign Up', data);
 
             if (response.ok) {
-                setUser({ type: userType, email, id: data.id });
+                setUser({ type: userType, email, id: data.data[0].id });
                 router.push('/');
             } else {
                 setError(data.message || 'Signup failed, please try again.');
@@ -76,7 +78,6 @@ const SignupPage = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     >
                         <option value="user">User</option>
-        
                     </select>
                 </div>
 

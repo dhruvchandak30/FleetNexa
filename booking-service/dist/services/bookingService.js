@@ -77,7 +77,7 @@ const createBookingWithDriverAndVehicle = (bookingData) => __awaiter(void 0, voi
     console.log(bookingDataResult, driver, vehicle);
     const { error: vehicleUpdateError } = yield supabaseClient_1.supabase
         .from('vehicles')
-        .update({ status: 'unavailable' })
+        .update({ status: 'active' })
         .eq('id', vehicle.id);
     if (vehicleUpdateError) {
         console.log('Vehicle Status Update Error', vehicleUpdateError);

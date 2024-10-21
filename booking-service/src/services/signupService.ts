@@ -29,14 +29,19 @@ const signup = async (req: Request, res: Response) => {
                 .from('users')
                 .insert([{ name, email, password_hash, phone_number }]);
 
+            const { data: data1, error: error1 } = await supabase
+                .from('users')
+                .select('email, id')
+                .eq('email', email);
+
             if (error) {
                 return res
                     .status(500)
-                    .json({ message: 'Error adding user', error });
+                    .json({ message: 'Error adding user', error: error1 });
             }
             return res
                 .status(201)
-                .json({ message: 'User registered successfully', data });
+                .json({ message: 'User registered successfully', data: data1 });
         }
     } catch (err) {
         return res.status(500).json({ message: 'Server error', error: err });
