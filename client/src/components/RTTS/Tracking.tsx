@@ -147,7 +147,7 @@ const TrackingPage = () => {
                                     </p>
 
                                     <p className="text-gray-800">
-                                        <strong>Estimated Cost:</strong> $
+                                        <strong>Estimated Cost:</strong> Rs
                                         {booking.estimated_cost}
                                     </p>
                                     <p className="text-gray-800">

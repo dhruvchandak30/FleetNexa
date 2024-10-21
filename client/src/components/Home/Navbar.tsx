@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useUserContext } from '@/context/UserContext';
 import Image from 'next/image';
 import logo from '@/assets/logo.png';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { user, setUser } = useUserContext();
+    const router = useRouter();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -23,6 +25,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         setUser(null);
+        router.push('/');
     };
 
     const handleLinkClick = (id: string) => {
