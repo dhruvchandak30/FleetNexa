@@ -33,8 +33,8 @@ const SignupPage = () => {
             }
 
             const response = await fetch(
-                // `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/signup`,
-                `http://localhost:5000/api/signup`,
+                `${process.env.NEXT_PUBLIC_BOOKING_SERVICE_URL}/api/signup`,
+                // `http://localhost:5000/api/signup`,
                 {
                     method: 'POST',
                     headers: {
